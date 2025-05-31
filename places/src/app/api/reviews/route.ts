@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { findPagenatedReviews } from "@/lib/db";
+import { findPagenatedReviews, getTotalReviewCount } from "@/lib/db";
 
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
@@ -20,8 +20,10 @@ export async function GET(request: NextRequest) {
   
   try {
     const reviews = findPagenatedReviews(id, fromReview, toReview);
+    const totalCount = await getTotalReviewCount(id);
+    
     return NextResponse.json(
-      { reviews },
+      { reviews, totalCount },
       {status: 200}
     );
   } catch (error) {

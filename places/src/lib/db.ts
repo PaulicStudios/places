@@ -114,6 +114,18 @@ export function findPagenatedReviews(id: string, fromReview: number, toReview: n
   `).all(id, limit, offset);
 }
 
+export function getTotalReviewCount(id: string) {
+  const database = db();
+  
+  const result = database.prepare(`
+    SELECT COUNT(*) as count 
+    FROM reviews 
+    WHERE product_code = ?
+  `).get(id) as { count: number };
+  
+  return result.count;
+}
+
 export function findAllReviews(id: string) {
   const database = db();
   
