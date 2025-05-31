@@ -86,6 +86,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(filteredData);
     
   } catch(err) {
+    console.log(`Error catched in /api/search ${err}`);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
