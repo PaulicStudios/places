@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { findReviews, saveReview } from '@/lib/db';
+import { findAllReviews, saveReview } from '@/lib/db';
 import { auth } from '@/auth';
 
 interface Review {
@@ -25,7 +25,7 @@ export async function GET(
       );
     }
 
-    const reviews = findReviews(code) as Review[];
+    const reviews = findAllReviews(code) as Review[];
     
     return NextResponse.json({
       reviews,
