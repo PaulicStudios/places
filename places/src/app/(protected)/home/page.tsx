@@ -22,7 +22,7 @@ export default async function Home() {
         />
       </Page.Header>
       <Page.Main className="flex flex-col items-center justify-start gap-4 mb-16">
-        <ReviewSubmission appId={process.env.NEXT_PUBLIC_APP_ID as `app_${string}`} actionId={process.env.NEXT_PUBLIC_ACTION_ID as `action_${string}`} />
+        <ReviewSubmission />
       </Page.Main>
     </>
   );

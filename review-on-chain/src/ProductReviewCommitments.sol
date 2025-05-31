@@ -27,7 +27,7 @@ contract ProductReviewCommitments {
     );
 
     IWorldID internal immutable worldId;
-    uint256 internal immutable groupId = 0;
+    uint256 internal immutable groupId = 1;
 
 	uint256 internal immutable externalNullifier;
 
@@ -56,7 +56,7 @@ contract ProductReviewCommitments {
         worldId.verifyProof(
             root,
             groupId,
-            0,
+            ByteHasher.hashToField(abi.encodePacked("COREGAME")),
             worldIdNullifierHash,
             externalNullifier,
             proof

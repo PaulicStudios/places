@@ -4,17 +4,12 @@ import { useState } from 'react';
 import { useWaitForTransactionReceipt } from '@worldcoin/minikit-react';
 import { createPublicClient, http } from 'viem';
 import { worldchain } from 'viem/chains';
-import { MiniKit, VerificationLevel, ISuccessResult } from '@worldcoin/minikit-js';
+import { MiniKit, VerificationLevel, ISuccessResult, verifyCloudProof } from '@worldcoin/minikit-js';
 import { submitReview } from '@/utils/review';
 import type { ReviewSubmission } from '@/utils/review';
 import { keccak256, encodePacked } from 'viem';
 
-interface ReviewSubmissionProps {
-  appId: string;
-  actionId: string;
-}
-
-export function ReviewSubmission({ appId, actionId }: ReviewSubmissionProps) {
+export function ReviewSubmission() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [transactionId, setTransactionId] = useState<string>('');
   const [verificationData, setVerificationData] = useState<ISuccessResult | null>(null);
@@ -30,7 +25,7 @@ export function ReviewSubmission({ appId, actionId }: ReviewSubmissionProps) {
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     client: client,
     appConfig: {
-      app_id: appId,
+      app_id: process.env.NEXT_PUBLIC_APP_ID as string,
     },
     transactionId: transactionId,
   });
@@ -44,8 +39,9 @@ export function ReviewSubmission({ appId, actionId }: ReviewSubmissionProps) {
     try {
       console.log('Starting verification...');
       const { finalPayload } = await MiniKit.commandsAsync.verify({
-        action: actionId,
-        verification_level: VerificationLevel.Device,
+        action: process.env.NEXT_PUBLIC_ACTION_ID as string,
+        verification_level: VerificationLevel.Orb,
+        signal: "COREGAME"
       });
 
       console.log('Verification response:', finalPayload);
@@ -55,6 +51,18 @@ export function ReviewSubmission({ appId, actionId }: ReviewSubmissionProps) {
       }
 
       setVerificationData(finalPayload as ISuccessResult);
+      const response = await fetch('/api/verify-proof', {
+        method: 'POST',
+        body: JSON.stringify({
+          payload: finalPayload,
+          action: process.env.NEXT_PUBLIC_ACTION_ID as string,
+          signal: "COREGAME"
+        }),
+      });
+
+      const data = await response.json();
+      console.log('Verify response:', data);
+
       setError(null);
     } catch (error) {
       console.error('Verification error:', error);
