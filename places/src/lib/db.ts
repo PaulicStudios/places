@@ -100,10 +100,10 @@ export function saveReview(review: {
   );
 }
 
-export function findPagenatedReviews(id: string, fromReview: number, toReview: number) {
+export function findPagenatedReviews(id: string, fromReview: number = 1, toReview: number) {
   const database = db();
   
-  const offset = fromReview - 1;
+  const offset = Math.max(0, fromReview - 1);
   const limit = toReview - fromReview + 1;
   
   return database.prepare(`
