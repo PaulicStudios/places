@@ -22,7 +22,9 @@ export const Navigation = () => {
   }, [pathname]);
 
   const handleTabChange = (newValue: string) => {
-    console.log('Tab changed to:', newValue); // Debug log
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Tab changed to:', newValue); // Debug log
+    }
     setValue(newValue);
     
     switch (newValue) {
