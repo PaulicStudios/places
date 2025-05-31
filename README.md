@@ -35,13 +35,6 @@ Review solves the problem of fake reviews and review spam by requiring World ID
 - **Go-UPC API** integration for product information lookup
 - Custom search API endpoints for product discovery
 
-### Key Technical Features
-- **Cross-platform barcode scanning** within MiniSDK constraints
-- **Smart camera selection** (prioritizes rear cameras for scanning)
-- **Progressive loading states** with skeleton components
-- **Hybrid search system** (local DB + external API fallback)
-- **Error handling and fallbacks** for camera access and network issues
-
 
 ## 📱 Usage
 
