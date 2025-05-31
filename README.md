@@ -65,7 +65,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Mini Apps UI Kit](https://github.com/worldcoin/mini-apps-ui-kit) for design components
 - [ZXing](https://github.com/zxing-js/library) for barcode scanning capabilities
 - [Go-UPC](https://go-upc.com) for product information API
-- [supercorp-ai](https://github.com/supercorp-ai) team for the initial template
 
 ## 🐛 Issues & Support
 
