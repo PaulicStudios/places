@@ -19,6 +19,16 @@ export function db(): Database.Database {
         image_url TEXT NOT NULL
       );
     `);
+
+    _db.exec(`
+      CREATE TABLE IF NOT EXISTS reviews(
+        review_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        product_code TEXT NOT NULL,
+        name TEXT NOT NULL,
+        description TEXT NOT NULL,
+        stars INTEGER NOT NULL CHECK(stars BETWEEN 1 AND 5)
+      );
+    `);
     loadDumbShit();
   }
 
@@ -61,6 +71,37 @@ export function saveProduct(product: {
     product.description, 
     product.image_url
   );
+}
+
+export function saveReview(review: {
+  product_code: string;
+  name: string;
+  description: string;
+  stars: number;
+}) {
+  const database = db();
+  
+  const stmt = database.prepare(`
+    INSERT INTO reviews (product_code, name, description, stars)
+    VALUES (?, ?, ?, ?)
+  `);
+  
+  return stmt.run(
+    review.product_code,
+    review.name,
+    review.description,
+    review.stars
+  );
+}
+
+export function findReviews(product_code: string) {
+  const database = db();
+  
+  return database.prepare(`
+    SELECT * FROM reviews 
+    WHERE product_code = ? 
+    ORDER BY review_id DESC
+  `).all(product_code);
 }
 
 export function loadDumbShit() {
