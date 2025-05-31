@@ -36,54 +36,14 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
     transactionId: transactionId,
   });
 
-  const handleVerify = async () => {
-    if (!MiniKit.isInstalled()) {
-      setError('World App is not installed');
-      return;
-    }
-
-    try {
-      console.log('Starting verification...');
-      const { finalPayload } = await MiniKit.commandsAsync.verify({
-        action: process.env.NEXT_PUBLIC_ACTION_ID as string,
-        verification_level: VerificationLevel.Orb,
-        signal: "COREGAME"
-      });
-
-      console.log('Verification response:', finalPayload);
-
-      if (finalPayload.status === 'error') {
-        throw new Error('Verification failed');
-      }
-
-      setVerificationData(finalPayload as ISuccessResult);
-      // const response = await fetch('/api/verify-proof', {
-      //   method: 'POST',
-      //   body: JSON.stringify({
-      //     payload: finalPayload,
-      //     action: process.env.NEXT_PUBLIC_ACTION_ID as string,
-      //     signal: "COREGAME"
-      //   }),
-      // });
-
-      // const data = await response.json();
-      // console.log('Verify response:', data);
-
-      setError(null);
-    } catch (error) {
-      console.error('Verification error:', error);
-      setError(error instanceof Error ? error.message : 'Verification failed');
-    }
-  };
-
-  const handleSubmitReview = async () => {
-    if (!verificationData) {
-      setError('Please verify with World ID first');
-      return;
-    }
-
+  const handleReviewSubmission = async () => {
     if (!content.trim()) {
       setError('Please enter review content');
+      return;
+    }
+
+    if (!MiniKit.isInstalled()) {
+      setError('World App is not installed');
       return;
     }
 
@@ -91,8 +51,24 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
       setIsSubmitting(true);
       setError(null);
 
+      // Step 1: World ID Verification
+      console.log('Starting verification...');
+      const { finalPayload: verifyPayload } = await MiniKit.commandsAsync.verify({
+        action: process.env.NEXT_PUBLIC_ACTION_ID as string,
+        verification_level: VerificationLevel.Orb,
+        signal: "COREGAME"
+      });
+
+      console.log('Verification response:', verifyPayload);
+
+      if (verifyPayload.status === 'error') {
+        throw new Error('Verification failed');
+      }
+
+      setVerificationData(verifyPayload as ISuccessResult);
+
+      // Step 2: Sign the review content
       console.log('Starting message signing...');
-      // Sign the review content
       const { finalPayload: signPayload } = await MiniKit.commandsAsync.signMessage({
         message: content
       });
@@ -103,7 +79,7 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
         throw new Error('Failed to sign message');
       }
 
-      // Calculate content hash
+      // Step 3: Calculate content hash and submit review
       const contentHash = keccak256(encodePacked(
         ['string', 'uint8'],
         [content, rating]
@@ -111,14 +87,14 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
       
       console.log('Preparing review data...');
       const reviewData: ReviewSubmission = {
-        barcode: productId, // Use the actual product ID
+        barcode: productId,
         reviewer: signPayload.address,
         rating,
         contentHash,
         signature: signPayload.signature,
-        worldIdNullifierHash: verificationData.nullifier_hash,
-        root: verificationData.merkle_root,
-        proof: verificationData.proof
+        worldIdNullifierHash: verifyPayload.nullifier_hash,
+        root: verifyPayload.merkle_root,
+        proof: verifyPayload.proof
       };
 
       console.log('Submitting review...');
@@ -136,55 +112,105 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
 
   return (
     <div className="p-4 space-y-4">
-      <div className="space-y-2">
-        <StarRating
-          value={rating}
-          onChange={(value) => setRating(value)}
-          allowHalf={true}
-          sliderMode={true}
-          interactive={true}
-          className="flex space-x-1"
-        />
-      </div>
+      {isConfirmed ? (
+        <div className="flex flex-col items-center justify-center space-y-4 py-8">
+          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+            <svg 
+              className="w-8 h-8 text-green-600" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M5 13l4 4L19 7" 
+              />
+            </svg>
+          </div>
+          <Typography variant="heading" className="text-center text-gray-900">
+            Review Submitted Successfully!
+          </Typography>
+          <Typography className="text-center text-gray-600">
+            Thank you for your review. Your contribution helps others make informed decisions.
+          </Typography>
+          {transactionId && (
+            <a
+              href={`https://worldchain-mainnet.explorer.alchemy.com/tx/${transactionId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 underline"
+            >
+              View Transaction on Explorer
+            </a>
+          )}
+        </div>
+      ) : (
+        <>
+          <div className="space-y-2">
+            <StarRating
+              value={rating}
+              onChange={(value) => setRating(value)}
+              allowHalf={true}
+              sliderMode={true}
+              interactive={true}
+              className="flex space-x-1"
+            />
+          </div>
 
-      <div className="space-y-2">
-        <Typography className="font-medium text-gray-600">Text</Typography>
-        <TextArea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          rows={4}
-        />
-      </div>
+          <div className="space-y-2">
+            <Typography className="font-medium text-gray-600">Text</Typography>
+            <TextArea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              rows={4}
+            />
+          </div>
 
-      <Button
-        onClick={handleVerify}
-        variant="primary"
-      >
-        Verify with World ID
-      </Button>
-
-      {verificationData && (
-        <Button
-          onClick={handleSubmitReview}
-          disabled={isSubmitting || isConfirming || !content.trim()}
-        >
-          {isSubmitting ? 'Submitting...' : 
-           isConfirming ? 'Confirming...' : 
-           isConfirmed ? 'Review Submitted!' : 
-           'Submit Review'}
-        </Button>
-      )}
-      
-      {error && (
-        <p className="mt-2 text-red-600">
-          {error}
-        </p>
-      )}
-      
-      {isConfirmed && (
-        <p className="mt-2 text-green-600">
-          Review successfully submitted and confirmed!
-        </p>
+          <div className="flex justify-center">
+            <Button
+              onClick={handleReviewSubmission}
+              variant="primary"
+              disabled={isSubmitting || isConfirming || !content.trim()}
+              className="min-w-[200px]"
+            >
+              {isSubmitting || isConfirming ? (
+                <div className="flex items-center justify-center">
+                  <svg 
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    fill="none" 
+                    viewBox="0 0 24 24"
+                  >
+                    <circle 
+                      className="opacity-25" 
+                      cx="12" 
+                      cy="12" 
+                      r="10" 
+                      stroke="currentColor" 
+                      strokeWidth="4"
+                    />
+                    <path 
+                      className="opacity-75" 
+                      fill="currentColor" 
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                  {isSubmitting ? 'Submitting...' : 'Confirming...'}
+                </div>
+              ) : (
+                'Submit Review'
+              )}
+            </Button>
+          </div>
+          
+          {error && (
+            <p className="mt-2 text-red-600">
+              {error}
+            </p>
+          )}
+        </>
       )}
     </div>
   );
