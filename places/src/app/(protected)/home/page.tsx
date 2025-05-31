@@ -9,7 +9,7 @@ export default async function Home() {
 
   return (
     <>
-      <Page.Header className="p-0">
+      <Page.Header className="p-0 pb-2">
         <TopBar
           className='text-gray-900 gradient-bg'
           title="Reviews"
@@ -28,6 +28,7 @@ export default async function Home() {
         <Link href="/home/product-demo" className="text-blue-500 hover:underline"> Product Test</Link>
         <Link href="/star-demo" className="text-blue-500 hover:underline">Star Test</Link>
         <Link href="/home/scanner" className="text-blue-500 hover:underline">Scanner Test</Link>
+        <Link href="/product/123456789012" className="text-blue-500 hover:underline">Single Product Test</Link>
       </Page.Main>
     </>
   );

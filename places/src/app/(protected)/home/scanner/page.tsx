@@ -2,7 +2,7 @@
 
 import { BarcodeScanner } from '@/components/BarcodeScanner';
 import { Page } from '@/components/PageLayout';
-import { Button, SkeletonTypography, Typography } from '@worldcoin/mini-apps-ui-kit-react';
+import { Button, SkeletonTypography, TopBar, Typography } from '@worldcoin/mini-apps-ui-kit-react';
 import { ScanBarcode, Package, BubbleStar } from 'iconoir-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -70,6 +70,14 @@ export default function BarcodeScannerPage() {
 
   return (
     <Page>
+      <Page.Header className="p-0">
+        <TopBar
+          className="text-gray-900 gradient-bg"
+          title="Barcode Scanner"
+        />
+      </Page.Header>
+      <Page.Main>
+
       <div className="container mx-auto px-4 py-6 max-w-2xl">
         <div className="text-center mb-8">
           <Typography variant='heading' level={1}>Barcode Scanner</Typography>
@@ -125,7 +133,7 @@ export default function BarcodeScannerPage() {
                         className="rounded-lg object-contain"
                         fill
                         sizes="(max-width: 768px) 100vw, 50vw"
-                      />
+                        />
                     </div>
                   </div>
                 )}
@@ -191,6 +199,7 @@ export default function BarcodeScannerPage() {
           </div>
         )}
       </div>
+      </Page.Main>
     </Page>
   );
 }
