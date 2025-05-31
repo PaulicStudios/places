@@ -1,7 +1,7 @@
 'use client';
 
 import { ProductCardGrid, ProductData } from '@/components/ProductCard';
-import { LiveFeedback, SearchField } from '@worldcoin/mini-apps-ui-kit-react';
+import { LiveFeedback, SearchField, Typography } from '@worldcoin/mini-apps-ui-kit-react';
 import { ChangeEvent, useCallback, useEffect, useState, ReactNode } from 'react';
 
 interface SearchError {
@@ -88,8 +88,8 @@ export const ProductSearch = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Search Error</h3>
-          <p className="text-gray-600">{error.message}</p>
+          <Typography variant="heading" level={3} className="mb-2">Search Error</Typography>
+          <Typography className="text-gray-600">{error.message}</Typography>
         </div>
       );
     }
@@ -102,10 +102,10 @@ export const ProductSearch = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">No Results Found</h3>
-          <p className="text-gray-600">
+          <Typography variant="heading" level={3} className="mb-2">No Results Found</Typography>
+          <Typography className="text-gray-600">
             No products found for &ldquo;{searchTerm}&rdquo;. Try a different search term.
-          </p>
+          </Typography>
         </div>
       );
     }
@@ -113,9 +113,9 @@ export const ProductSearch = () => {
     if (results.length > 0) {
       return (
         <div className="space-y-4">
-          <div className="text-sm text-gray-600">
+          <Typography className="text-gray-600">
             Found {results.length} product{results.length !== 1 ? 's' : ''} for &ldquo;{searchTerm}&rdquo;
-          </div>
+          </Typography>
           <ProductCardGrid
             products={results}
             interactive={false}
@@ -134,10 +134,10 @@ export const ProductSearch = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Search Products</h3>
-          <p className="text-gray-600">
+          <Typography variant="heading" level={3} className="mb-2">Search Products</Typography>
+          <Typography className="text-gray-600">
             Start typing to search for products by name.
-          </p>
+          </Typography>
         </div>
       );
     }

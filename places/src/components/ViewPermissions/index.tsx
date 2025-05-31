@@ -1,6 +1,6 @@
 'use client';
 
-import { ListItem } from '@worldcoin/mini-apps-ui-kit-react';
+import { ListItem, Typography } from '@worldcoin/mini-apps-ui-kit-react';
 import { MiniKit } from '@worldcoin/minikit-js';
 import { useMiniKit } from '@worldcoin/minikit-js/minikit-provider';
 import { useEffect, useState } from 'react';
@@ -37,7 +37,7 @@ export const ViewPermissions = () => {
 
   return (
     <div className="grid w-full gap-4">
-      <p className="text-lg font-semibold">Permissions</p>
+      <Typography variant="heading" level={2}>Permissions</Typography>
       {permissions &&
         Object.entries(permissions).map(([permission, value]) => (
           <ListItem

@@ -12,7 +12,7 @@ export function db(): Database.Database {
     
     _db.exec(`
       CREATE TABLE IF NOT EXISTS products(
-        code TEXT NOT NULL,
+        code TEXT PRIMARY KEY NOT NULL,
         codeType TEXT NOT NULL,
         name TEXT NOT NULL,
         description TEXT NOT NULL,
@@ -60,7 +60,7 @@ export function saveProduct(product: {
   const database = db();
   
   const stmt = database.prepare(`
-    INSERT INTO products (code, codeType, name, description, image_url)
+    INSERT OR REPLACE INTO products (code, codeType, name, description, image_url)
     VALUES (?, ?, ?, ?, ?)
   `);
   
@@ -71,6 +71,11 @@ export function saveProduct(product: {
     product.description, 
     product.image_url
   );
+}
+
+export function getProductByCode(code: string) {
+  const database = db();
+  return database.prepare('SELECT * FROM products WHERE code = ?').get(code);
 }
 
 export function saveReview(review: {
@@ -108,7 +113,7 @@ export function loadDumbShit() {
   const database = db();
   
   const stmt = database.prepare(`
-    INSERT INTO products (code, codeType, name, description, image_url)
+    INSERT OR REPLACE INTO products (code, codeType, name, description, image_url)
     VALUES (?, ?, ?, ?, ?)
   `);
   

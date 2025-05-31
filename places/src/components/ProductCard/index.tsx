@@ -1,9 +1,10 @@
 'use client';
 
 import { StarRating } from '@/components/StarRating';
-import { useHaptics } from '@worldcoin/mini-apps-ui-kit-react';
+import { Typography } from '@worldcoin/mini-apps-ui-kit-react';
 import Image from 'next/image';
 import { useState } from 'react';
+import { MiniKit } from '@worldcoin/minikit-js';
 
 /**
  * Product data structure that matches the database schema
@@ -23,6 +24,7 @@ interface ProductCardProps {
   rating?: number;
   interactive?: boolean;
   onRatingChange?: (rating: number) => void;
+  onProductClick?: (product: ProductData) => void;
   className?: string;
   showRating?: boolean;
 }
@@ -44,17 +46,26 @@ export const ProductCard = ({
   rating = 0,
   interactive = false,
   onRatingChange,
+  onProductClick,
   className = '',
   showRating = true,
 }: ProductCardProps) => {
   const [currentRating, setCurrentRating] = useState(rating);
-  const { impact } = useHaptics();
 
   const handleRatingChange = (newRating: number) => {
     setCurrentRating(newRating);
     if (interactive && onRatingChange) {
-      impact('light');
       onRatingChange(newRating);
+    }
+  };
+
+  const handleCardClick = () => {
+    if (onProductClick) {
+      MiniKit.commands.sendHapticFeedback({
+        hapticsType: 'impact',
+        style: 'light'
+      });
+      onProductClick(product);
     }
   };
 
@@ -64,7 +75,10 @@ export const ProductCard = ({
   };
 
   return (
-    <div className={`flex flex-col w-full border-2 border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm ${className}`}>
+    <div 
+      className={`flex flex-col w-full border-2 border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm cursor-pointer hover:shadow-md transition-shadow duration-200 ${className}`}
+      onClick={handleCardClick}
+    >
       {/* Product Image */}
       <div className="relative h-48 w-full bg-gray-100">
         {product.image_url ? (
@@ -78,7 +92,7 @@ export const ProductCard = ({
           />
         ) : (
           <div className="flex items-center justify-center h-full bg-gray-100">
-            <div className="text-gray-400 text-sm">No image available</div>
+            <Typography className="text-gray-600">No image available</Typography>
           </div>
         )}
       </div>
@@ -87,28 +101,28 @@ export const ProductCard = ({
       <div className="p-4 space-y-3">
         {/* Product Name */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
+          <Typography variant="heading" level={3} className="line-clamp-2">
             {product.name || 'Unknown Product'}
-          </h3>
+          </Typography>
           
           {/* Code Information */}
           {product.code && (
             <div className="flex items-center gap-2 mt-1">
-              <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+              <Typography className="font-medium text-gray-600 uppercase tracking-wide" level={5}>
                 {product.codeType || 'CODE'}
-              </span>
-              <span className="text-xs text-gray-600 font-mono">
+              </Typography>
+              <Typography className="text-gray-600 font-mono" level={5}>
                 {product.code}
-              </span>
+              </Typography>
             </div>
           )}
         </div>
 
         {/* Product Description */}
         {product.description && (
-          <p className="text-sm text-gray-600 line-clamp-3 leading-relaxed">
+          <Typography className="text-gray-600 line-clamp-3 leading-relaxed">
             {product.description}
-          </p>
+          </Typography>
         )}
 
         {/* Star Rating */}
@@ -147,6 +161,7 @@ interface ProductCardGridProps {
   products: ProductData[];
   interactive?: boolean;
   onRatingChange?: (productCode: string, rating: number) => void;
+  onProductClick?: (product: ProductData) => void;
   className?: string;
   showRating?: boolean;
 }
@@ -155,6 +170,7 @@ export const ProductCardGrid = ({
   products,
   interactive = false,
   onRatingChange,
+  onProductClick,
   className = '',
   showRating = true,
 }: ProductCardGridProps) => {
@@ -166,6 +182,7 @@ export const ProductCardGrid = ({
           product={product}
           interactive={interactive}
           onRatingChange={(rating) => onRatingChange?.(product.code, rating)}
+          onProductClick={onProductClick}
           showRating={showRating}
         />
       ))}
