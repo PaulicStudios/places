@@ -2,7 +2,7 @@
 
 import { BarcodeScanner } from '@/components/BarcodeScanner';
 import { Page } from '@/components/PageLayout';
-import { Button, Typography } from '@worldcoin/mini-apps-ui-kit-react';
+import { Button, SkeletonTypography, Typography } from '@worldcoin/mini-apps-ui-kit-react';
 import { ScanBarcode, Package, BubbleStar } from 'iconoir-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -93,10 +93,22 @@ export default function BarcodeScannerPage() {
           <div className="space-y-6">
             {/* Loading indicator when looking up product */}
             {isLookingUp && (
-              <div className="text-center py-4">
-                <div className="inline-flex items-center gap-2 text-blue-600">
-                  <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                  Looking up product information...
+               <div className="border border-gray-200 rounded-lg p-6 shadow-md">
+                <div className="flex items-center justify-center mb-4">
+                  <div className="animate-spin rounded-full h-10 w-10 border-4 border-primary border-t-transparent"></div>
+                </div>
+                <Typography className="text-center font-medium mb-4">Looking up product information...</Typography>
+                <SkeletonTypography
+                  level={2}
+                  variant="heading"
+                />
+                <SkeletonTypography
+                  level={2}
+                  lines={2}
+                  variant="body"
+                />
+                <div className="text-center text-sm text-gray-500 mt-4">
+                  This may take a moment, please wait...
                 </div>
               </div>
             )}
@@ -119,14 +131,14 @@ export default function BarcodeScannerPage() {
                 )}
                 
                 <div className="mb-4">
-                  <h2 className="text-2xl font-semibold text-gray-900">
+                  <Typography level={2} variant='heading'>
                     {scannedProduct.name || 'Unknown Product'}
-                  </h2>
+                  </Typography>
                   
                   {scannedProduct.brand && (
-                    <p className="text-gray-600">
+                    <Typography className="text-gray-600">
                       by {scannedProduct.brand}
-                    </p>
+                    </Typography>
                   )}
                 </div>
 
