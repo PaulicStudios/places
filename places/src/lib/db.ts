@@ -11,7 +11,6 @@ export function db(): Database.Database {
     
     _db.exec(`
       CREATE TABLE IF NOT EXISTS products(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
         code TEXT NOT NULL,
         codeType TEXT NOT NULL,
         name TEXT NOT NULL,
