@@ -10,10 +10,14 @@ contract DeployScript is Script {
         vm.startBroadcast(deployerPrivateKey);
 
         // World ID contract address
-        address worldIdAddress = 0x17B354dD2595411ff79041f930e491A4Df39A278;
+        address worldIdAddress = vm.envAddress("WORLD_ID_ADDRESS");
         
         IWorldID worldId = IWorldID(worldIdAddress);
-        ProductReviewCommitments productReview = new ProductReviewCommitments(worldId, "app_23fd4240c950374e1cd8460e2593bd08", "verify-review");
+        ProductReviewCommitments productReview = new ProductReviewCommitments(
+            worldId,
+            vm.envString("APP_ID"),
+            vm.envString("ACTION_ID")
+        );
 
         vm.stopBroadcast();
     }
