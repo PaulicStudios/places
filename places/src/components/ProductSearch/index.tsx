@@ -89,7 +89,7 @@ export const ProductSearch = () => {
             </svg>
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Search Error</h3>
-          <p className="text-gray-600">{error.message}</p>
+          <p className="text-gray-500">{error.message}</p>
         </div>
       );
     }
@@ -103,7 +103,7 @@ export const ProductSearch = () => {
             </svg>
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">No Results Found</h3>
-          <p className="text-gray-600">
+          <p className="text-gray-500">
             No products found for &ldquo;{searchTerm}&rdquo;. Try a different search term.
           </p>
         </div>
@@ -113,7 +113,7 @@ export const ProductSearch = () => {
     if (results.length > 0) {
       return (
         <div className="space-y-4">
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-gray-500">
             Found {results.length} product{results.length !== 1 ? 's' : ''} for &ldquo;{searchTerm}&rdquo;
           </div>
           <ProductCardGrid
@@ -135,7 +135,7 @@ export const ProductSearch = () => {
             </svg>
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Search Products</h3>
-          <p className="text-gray-600">
+          <p className="text-gray-500">
             Start typing to search for products by name.
           </p>
         </div>

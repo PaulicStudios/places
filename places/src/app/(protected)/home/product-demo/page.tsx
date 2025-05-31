@@ -57,7 +57,7 @@ export default function ProductCardDemo() {
     <Page>
       <Page.Header>
         <h1 className="text-2xl font-bold text-gray-900">Product Demo</h1>
-        <p className="text-sm text-gray-600 mt-1">
+        <p className="text-sm text-gray-500 mt-1">
           Product search and display functionality
         </p>
       </Page.Header>

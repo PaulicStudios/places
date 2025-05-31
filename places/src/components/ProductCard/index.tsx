@@ -110,7 +110,7 @@ export const ProductCard = ({
               <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
                 {product.codeType || 'CODE'}
               </span>
-              <span className="text-xs text-gray-600 font-mono">
+              <span className="text-xs text-gray-500 font-mono">
                 {product.code}
               </span>
             </div>
@@ -119,7 +119,7 @@ export const ProductCard = ({
 
         {/* Product Description */}
         {product.description && (
-          <p className="text-sm text-gray-600 line-clamp-3 leading-relaxed">
+          <p className="text-sm text-gray-500 line-clamp-3 leading-relaxed">
             {product.description}
           </p>
         )}

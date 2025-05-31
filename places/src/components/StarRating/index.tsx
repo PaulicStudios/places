@@ -249,7 +249,7 @@ export const StarRating = ({
     >
       {stars}
       {interactive && (
-        <span className="ml-2 text-sm text-gray-600 min-w-[2rem]">
+        <span className="ml-2 text-sm text-gray-500 min-w-[2rem]">
           {hoveredRating ?? value}/5
         </span>
       )}

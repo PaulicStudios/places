@@ -27,6 +27,7 @@ export default async function Home() {
         <ProductSearch />
         <Link href="/home/product-demo" className="text-blue-500 hover:underline"> Product Test</Link>
         <Link href="/star-demo" className="text-blue-500 hover:underline">Star Test</Link>
+        <Link href="/home/scanner" className="text-blue-500 hover:underline">Scanner Test</Link>
       </Page.Main>
     </>
   );
