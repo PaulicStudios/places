@@ -7,7 +7,6 @@ import { worldchain } from 'viem/chains';
 import { MiniKit, VerificationLevel, ISuccessResult } from '@worldcoin/minikit-js';
 import { submitReview } from '@/utils/review';
 import type { ReviewSubmission } from '@/utils/review';
-import { useSession } from 'next-auth/react';
 import { keccak256, encodePacked } from 'viem';
 
 interface ReviewSubmissionProps {
@@ -22,7 +21,6 @@ export function ReviewSubmission({ appId, actionId }: ReviewSubmissionProps) {
   const [content, setContent] = useState('');
   const [rating, setRating] = useState(5);
   const [error, setError] = useState<string | null>(null);
-  const { data: session } = useSession();
 
   const client = createPublicClient({
     chain: worldchain,
@@ -47,7 +45,7 @@ export function ReviewSubmission({ appId, actionId }: ReviewSubmissionProps) {
       console.log('Starting verification...');
       const { finalPayload } = await MiniKit.commandsAsync.verify({
         action: actionId,
-        verification_level: VerificationLevel.Device
+        verification_level: VerificationLevel.Device,
       });
 
       console.log('Verification response:', finalPayload);
@@ -106,9 +104,7 @@ export function ReviewSubmission({ appId, actionId }: ReviewSubmissionProps) {
         signature: signPayload.signature,
         worldIdNullifierHash: verificationData.nullifier_hash,
         root: verificationData.merkle_root,
-        proof: verificationData.proof.split(','),
-        appId,
-        actionId
+        proof: verificationData.proof
       };
 
       console.log('Submitting review...');

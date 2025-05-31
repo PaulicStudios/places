@@ -27,10 +27,13 @@ contract ProductReviewCommitments {
     );
 
     IWorldID internal immutable worldId;
-    uint256 internal immutable groupId = 1;
+    uint256 internal immutable groupId = 0;
 
-    constructor(IWorldID _worldId) {
+	uint256 internal immutable externalNullifier;
+
+    constructor(IWorldID _worldId, string memory _appId, string memory _actionId) {
         worldId = _worldId;
+        externalNullifier = ByteHasher.hashToField(abi.encodePacked(ByteHasher.hashToField(abi.encodePacked(_appId)), _actionId));
     }
 
     // Called by your trusted backend
@@ -40,17 +43,12 @@ contract ProductReviewCommitments {
         uint8 _rating,
         bytes32 _contentHash,
         bytes memory _signature,
-        uint256 _worldIdNullifierHash,
+        uint256 worldIdNullifierHash,
         uint256 root,
-        uint256[8] calldata proof,
-        string memory _appId,
-        string memory _actionId
+        uint256[8] calldata proof
     ) public {
-        // Compute externalNullifier on the fly
-        uint256 externalNullifier = ByteHasher.hashToField(abi.encodePacked(ByteHasher.hashToField(abi.encodePacked(_appId)), _actionId));
-
         // Check if the review commitment has already been submitted
-        if (isNullifierUsedForBarcodeReview[keccak256(abi.encodePacked(_barcode, _worldIdNullifierHash))]) {
+        if (isNullifierUsedForBarcodeReview[keccak256(abi.encodePacked(_barcode, worldIdNullifierHash))]) {
             revert("Review commitment already submitted.");
         }
 
@@ -58,8 +56,8 @@ contract ProductReviewCommitments {
         worldId.verifyProof(
             root,
             groupId,
-            ByteHasher.hashToField(abi.encodePacked(_reviewer)),
-            _worldIdNullifierHash,
+            0,
+            worldIdNullifierHash,
             externalNullifier,
             proof
         );
@@ -72,14 +70,14 @@ contract ProductReviewCommitments {
             contentHash: _contentHash,
             timestamp: block.timestamp, // On-chain timestamp
             signature: _signature,
-            worldIdNullifierHash: _worldIdNullifierHash
+            worldIdNullifierHash: worldIdNullifierHash
         }));
 
         // Mark the nullifier as used
-        isNullifierUsedForBarcodeReview[keccak256(abi.encodePacked(_barcode, _worldIdNullifierHash))] = true;
+        isNullifierUsedForBarcodeReview[keccak256(abi.encodePacked(_barcode, worldIdNullifierHash))] = true;
 
         // Emit the event
-        emit ReviewCommitmentSubmitted(_barcode, _reviewer, _rating, _contentHash, _worldIdNullifierHash);
+        emit ReviewCommitmentSubmitted(_barcode, _reviewer, _rating, _contentHash, worldIdNullifierHash);
     }
 
     function getReviewCommitments(string memory _barcode) public view returns (ReviewCommitment[] memory) {

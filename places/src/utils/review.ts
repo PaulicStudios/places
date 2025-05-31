@@ -1,11 +1,6 @@
 import { MiniKit } from '@worldcoin/minikit-js';
 import ProductReviewCommitmentsABI from '@/abi/ProductReviewCommitments.json';
-
-declare global {
-  interface Window {
-    ethereum: any;
-  }
-}
+import { decodeAbiParameters, parseAbiParameters } from 'viem';
 
 export interface ReviewSubmission {
   barcode: string;
@@ -15,9 +10,7 @@ export interface ReviewSubmission {
   signature: string;
   worldIdNullifierHash: string;
   root: string;
-  proof: string[];
-  appId: string;
-  actionId: string;
+  proof: string;
 }
 
 export async function submitReview(reviewData: ReviewSubmission) {
@@ -27,49 +20,91 @@ export async function submitReview(reviewData: ReviewSubmission) {
     }
 
     console.log('Starting transaction...');
-    console.log('Contract address:', process.env.NEXT_PUBLIC_REVIEW_CONTRACT_ADDRESS);
+    const contractAddress = process.env.NEXT_PUBLIC_REVIEW_CONTRACT_ADDRESS;
+    if (!contractAddress) {
+      throw new Error('Contract address not configured');
+    }
+    console.log('Contract address:', contractAddress);
     console.log('Review data:', reviewData);
 
-    const { commandPayload, finalPayload } = await MiniKit.commandsAsync.sendTransaction({
-      transaction: [
-        {
-          address: process.env.NEXT_PUBLIC_REVIEW_CONTRACT_ADDRESS as `0x${string}`,
-          abi: ProductReviewCommitmentsABI,
-          functionName: 'submitReviewCommitment',
-          args: [
-            reviewData.barcode,
-            reviewData.reviewer,
-            reviewData.rating,
-            reviewData.contentHash,
-            reviewData.signature,
-            reviewData.worldIdNullifierHash,
-            reviewData.root,
-            reviewData.proof,
-            reviewData.appId,
-            reviewData.actionId
-          ],
-        },
+    // Validate required fields
+    if (!reviewData.proof || !reviewData.root || !reviewData.worldIdNullifierHash) {
+      throw new Error('Missing required proof data');
+    }
+
+    // Ensure proof is properly formatted
+    let proofArray;
+    try {
+      // First try to parse the proof as a hex string
+      if (!reviewData.proof.startsWith('0x')) {
+        throw new Error('Proof must be a hex string starting with 0x');
+      }
+
+      proofArray = decodeAbiParameters(
+        parseAbiParameters('uint256[8]'),
+        reviewData.proof as `0x${string}`
+      )[0];
+
+      console.log('Decoded proof array:', proofArray);
+    } catch (error) {
+      console.error('Error decoding proof:', error);
+      throw new Error(`Failed to decode proof data: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+
+    // Convert all numeric values to BigInt
+    const worldIdNullifierHash = BigInt(reviewData.worldIdNullifierHash);
+    const root = BigInt(reviewData.root);
+
+    const transactionData = {
+      address: process.env.NEXT_PUBLIC_REVIEW_CONTRACT_ADDRESS as `0x${string}`,
+      abi: ProductReviewCommitmentsABI,
+      functionName: 'submitReviewCommitment',
+      args: [
+        reviewData.barcode,
+        reviewData.reviewer as `0x${string}`,
+        reviewData.rating,
+        reviewData.contentHash,
+        reviewData.signature,
+        worldIdNullifierHash,
+        root,
+        proofArray
       ],
-    });
-
-    console.log('Transaction command payload:', commandPayload);
-    console.log('Transaction final payload:', finalPayload);
-
-    if (finalPayload.status === 'error') {
-      console.error('Transaction error:', finalPayload.error_code);
-      throw new Error(`Transaction failed: ${finalPayload.error_code}`);
-    }
-
-    if (!finalPayload.transaction_id) {
-      throw new Error('No transaction ID received');
-    }
-
-    return {
-      success: true,
-      transactionId: finalPayload.transaction_id
     };
+
+    try {
+      const { commandPayload, finalPayload } = await MiniKit.commandsAsync.sendTransaction({
+        transaction: [transactionData],
+      });
+
+      console.log('Transaction command payload:', commandPayload);
+      console.log('Transaction final payload:', finalPayload);
+
+      if (finalPayload.status === 'error') {
+        const errorDetails = finalPayload.details ? JSON.stringify(finalPayload.details) : 'No details provided';
+        console.error('Transaction error details:', errorDetails);
+        
+        throw new Error(`Transaction failed: ${finalPayload.error_code} - ${errorDetails}`);
+      }
+
+      if (!finalPayload.transaction_id) {
+        throw new Error('No transaction ID received');
+      }
+
+      return {
+        success: true,
+        transactionId: finalPayload.transaction_id
+      };
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('user_rejected')) {
+        throw new Error('Transaction was rejected. Please try again and make sure to approve the transaction in the World App.');
+      }
+      throw error;
+    }
   } catch (error) {
     console.error('Error submitting review:', error);
+    if (error instanceof Error) {
+      throw new Error(`Failed to submit review: ${error.message}`);
+    }
     throw error;
   }
 }

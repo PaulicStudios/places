@@ -132,7 +132,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "_worldIdNullifierHash",
+        "name": "worldIdNullifierHash",
         "type": "uint256"
       },
       {
@@ -144,16 +144,6 @@
         "internalType": "uint256[8]",
         "name": "proof",
         "type": "uint256[8]"
-      },
-      {
-        "internalType": "string",
-        "name": "_appId",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_actionId",
-        "type": "string"
       }
     ],
     "name": "submitReviewCommitment",

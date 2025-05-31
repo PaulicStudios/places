@@ -28,7 +28,7 @@ contract ProductReviewCommitmentsTest is Test {
 
     function setUp() public {
         mockWorldID = new MockWorldID();
-        reviewContract = new ProductReviewCommitments(mockWorldID);
+        reviewContract = new ProductReviewCommitments(mockWorldID, APP_ID, ACTION_ID);
     }
 
     function testSubmitReviewCommitment() public {
@@ -40,9 +40,7 @@ contract ProductReviewCommitmentsTest is Test {
             SIGNATURE,
             NULLIFIER_HASH,
             ROOT,
-            PROOF,
-            APP_ID,
-            ACTION_ID
+            PROOF
         );
         ProductReviewCommitments.ReviewCommitment[] memory reviews = reviewContract.getReviewCommitments(BARCODE);
         assertEq(reviews.length, 1);
@@ -59,9 +57,7 @@ contract ProductReviewCommitmentsTest is Test {
             SIGNATURE,
             NULLIFIER_HASH,
             ROOT,
-            PROOF,
-            APP_ID,
-            ACTION_ID
+            PROOF
         );
         vm.expectRevert("Review commitment already submitted.");
         reviewContract.submitReviewCommitment(
@@ -72,9 +68,7 @@ contract ProductReviewCommitmentsTest is Test {
             SIGNATURE,
             NULLIFIER_HASH,
             ROOT,
-            PROOF,
-            APP_ID,
-            ACTION_ID
+            PROOF
         );
     }
 } 

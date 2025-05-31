@@ -14,7 +14,7 @@ contract DeployScript is Script {
         address worldIdAddress = 0x17B354dD2595411ff79041f930e491A4Df39A278;
         
         IWorldID worldId = IWorldID(worldIdAddress);
-        ProductReviewCommitments productReview = new ProductReviewCommitments(worldId);
+        ProductReviewCommitments productReview = new ProductReviewCommitments(worldId, "app_e7ffd3a5eb7e7210ce59a79666b17a7b", "verify-review");
 
         vm.stopBroadcast();
     }
