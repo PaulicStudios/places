@@ -3,17 +3,23 @@
 import { ProductCardGrid, ProductData } from '@/components/ProductCard';
 import { LiveFeedback, SearchField, Typography } from '@worldcoin/mini-apps-ui-kit-react';
 import { ChangeEvent, useCallback, useEffect, useState, ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface SearchError {
   message: string;
 }
 
 export const ProductSearch = () => {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<ProductData[]>([]);
   const [error, setError] = useState<SearchError | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
+
+  const handleProductClick = (product: ProductData) => {
+    router.push(`/product/${product.code}`);
+  };
 
   // Debounced search function
   const searchProducts = useCallback(async (query: string) => {
@@ -119,6 +125,7 @@ export const ProductSearch = () => {
           <ProductCardGrid
             products={results}
             interactive={false}
+            onProductClick={handleProductClick}
             showRating={false}
             className="mt-4"
           />
