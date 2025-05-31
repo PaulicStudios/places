@@ -2,7 +2,6 @@ import { auth } from '@/auth';
 import { Page } from '@/components/PageLayout';
 import { Marble, TopBar, Typography } from '@worldcoin/mini-apps-ui-kit-react';
 import { ProductSearch } from '@/components/ProductSearch';
-import Link from 'next/link';
 
 export default async function Home() {
   const session = await auth();
@@ -25,10 +24,6 @@ export default async function Home() {
       </Page.Header>
       <Page.Main className="flex flex-col items-center justify-start gap-4 mb-16">
         <ProductSearch />
-        <Link href="/home/product-demo" className="text-blue-500 hover:underline"> Product Test</Link>
-        <Link href="/star-demo" className="text-blue-500 hover:underline">Star Test</Link>
-        <Link href="/home/scanner" className="text-blue-500 hover:underline">Scanner Test</Link>
-        <Link href="/product/123456789012" className="text-blue-500 hover:underline">Single Product Test</Link>
       </Page.Main>
     </>
   );
