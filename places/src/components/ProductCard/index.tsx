@@ -1,6 +1,7 @@
 'use client';
 
 import { StarRating } from '@/components/StarRating';
+import { Typography } from '@worldcoin/mini-apps-ui-kit-react';
 import Image from 'next/image';
 import { useState } from 'react';
 import { MiniKit } from '@worldcoin/minikit-js';
@@ -91,7 +92,7 @@ export const ProductCard = ({
           />
         ) : (
           <div className="flex items-center justify-center h-full bg-gray-100">
-            <div className="text-gray-400 text-sm">No image available</div>
+            <Typography className="text-gray-600">No image available</Typography>
           </div>
         )}
       </div>
@@ -100,28 +101,28 @@ export const ProductCard = ({
       <div className="p-4 space-y-3">
         {/* Product Name */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
+          <Typography variant="heading" level={3} className="line-clamp-2">
             {product.name || 'Unknown Product'}
-          </h3>
+          </Typography>
           
           {/* Code Information */}
           {product.code && (
             <div className="flex items-center gap-2 mt-1">
-              <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+              <Typography className="font-medium text-gray-600 uppercase tracking-wide" level={5}>
                 {product.codeType || 'CODE'}
-              </span>
-              <span className="text-xs text-gray-500 font-mono">
+              </Typography>
+              <Typography className="text-gray-600 font-mono" level={5}>
                 {product.code}
-              </span>
+              </Typography>
             </div>
           )}
         </div>
 
         {/* Product Description */}
         {product.description && (
-          <p className="text-sm text-gray-500 line-clamp-3 leading-relaxed">
+          <Typography className="text-gray-600 line-clamp-3 leading-relaxed">
             {product.description}
-          </p>
+          </Typography>
         )}
 
         {/* Star Rating */}

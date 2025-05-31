@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, LiveFeedback } from '@worldcoin/mini-apps-ui-kit-react';
+import { Button, LiveFeedback, Typography } from '@worldcoin/mini-apps-ui-kit-react';
 import { BrowserMultiFormatReader, NotFoundException } from '@zxing/library';
 import { Camera } from 'iconoir-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -332,8 +332,8 @@ export const BarcodeScanner = ({
         {scanResult && (
           <div className="space-y-4">
             <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-              <h3 className="font-semibold text-green-800 mb-2">Scan Result:</h3>
-              <p className="text-green-700 break-all">{scanResult}</p>
+              <Typography variant="heading" level={3} className="text-green-800 mb-2">Scan Result:</Typography>
+              <Typography className="text-green-700 break-all">{scanResult}</Typography>
             </div>
             <Button
               onClick={retryScanning}
@@ -348,7 +348,7 @@ export const BarcodeScanner = ({
 
         {error && (
           <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-700">{error}</p>
+            <Typography className="text-red-700">{error}</Typography>
             {hasPermission === false && (
               <Button
                 onClick={requestCameraPermission}
@@ -363,9 +363,9 @@ export const BarcodeScanner = ({
         )}
       </div>
 
-      <div className="text-sm text-gray-500 text-center max-w-md">
-        <p>Position the barcode within the camera frame. The scanner will automatically detect and read the code.</p>
-      </div>
+      <Typography className="text-gray-600 text-center max-w-md">
+        Position the barcode within the camera frame. The scanner will automatically detect and read the code.
+      </Typography>
     </div>
   );
 };

@@ -1,6 +1,7 @@
 'use client';
 
 import { Star, StarSolid } from 'iconoir-react';
+import { Typography } from '@worldcoin/mini-apps-ui-kit-react';
 import { useState } from 'react';
 import { MiniKit } from '@worldcoin/minikit-js';
 
@@ -131,8 +132,8 @@ export const StarRating = ({
       <div className={`flex flex-col gap-3 ${className}`}>
         <style dangerouslySetInnerHTML={{ __html: sliderStyles }} />
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-gray-700">Rating</span>
-          <span className="text-sm font-semibold text-gray-900">{value.toFixed(1)}/5</span>
+          <Typography className="font-medium text-gray-600">Rating</Typography>
+          <Typography className="font-semibold">{value.toFixed(1)}/5</Typography>
         </div>
         
         
@@ -249,9 +250,9 @@ export const StarRating = ({
     >
       {stars}
       {interactive && (
-        <span className="ml-2 text-sm text-gray-500 min-w-[2rem]">
+        <Typography className="ml-2 text-gray-600 min-w-[2rem]">
           {hoveredRating ?? value}/5
-        </span>
+        </Typography>
       )}
     </div>
   );

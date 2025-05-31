@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { Page } from '@/components/PageLayout';
-import { Marble, TopBar } from '@worldcoin/mini-apps-ui-kit-react';
+import { Marble, TopBar, Typography } from '@worldcoin/mini-apps-ui-kit-react';
 import { ProductSearch } from '@/components/ProductSearch';
 import Link from 'next/link';
 
@@ -15,9 +15,9 @@ export default async function Home() {
           title="Reviews"
           endAdornment={
             <div className="flex items-center gap-2">
-              <p className="text-sm font-semibold">
+              <Typography className="font-semibold">
                 {session?.user.username}
-              </p>
+              </Typography>
               <Marble src={session?.user.profilePictureUrl} className="w-12" />
             </div>
           }

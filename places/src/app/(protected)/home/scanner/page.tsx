@@ -73,7 +73,7 @@ export default function BarcodeScannerPage() {
       <div className="container mx-auto px-4 py-6 max-w-2xl">
         <div className="text-center mb-8">
           <Typography variant='heading' level={1}>Barcode Scanner</Typography>
-          <Typography className="text-gray-500">
+          <Typography className="text-gray-600">
             Scan barcodes to get product information
           </Typography>
         </div>
@@ -107,9 +107,9 @@ export default function BarcodeScannerPage() {
                   lines={2}
                   variant="body"
                 />
-                <div className="text-center text-sm text-gray-500 mt-4">
+                <Typography className="text-center text-gray-600 mt-4">
                   This may take a moment, please wait...
-                </div>
+                </Typography>
               </div>
             )}
 
@@ -143,14 +143,14 @@ export default function BarcodeScannerPage() {
                 </div>
 
                 {scannedProduct.description && (
-                  <p className="text-gray-700 mb-6">
+                  <Typography className="text-gray-600 mb-6">
                     {scannedProduct.description}
-                  </p>
+                  </Typography>
                 )}
 
-                <div className="text-sm text-gray-500 font-mono mb-6">
+                <Typography className="font-mono mb-6 text-gray-600">
                   Product ID: {scannedProduct.code || scannedProduct.id || 'Unknown'}
-                </div>
+                </Typography>
 
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Button
