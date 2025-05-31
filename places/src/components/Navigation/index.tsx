@@ -1,7 +1,7 @@
 'use client';
 
 import { TabItem, Tabs } from '@worldcoin/mini-apps-ui-kit-react';
-import { Home, List, ScanBarcode } from 'iconoir-react';
+import { Home, ScanBarcode } from 'iconoir-react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -44,7 +44,7 @@ export const Navigation = () => {
     <Tabs value={value} onValueChange={handleTabChange} className='mt-2'>
       <TabItem value="home" icon={<Home />} label="Home" />
       <TabItem value="scanner" icon={<ScanBarcode />} label="Scanner" />
-      <TabItem value="reviews" icon={<List />} label="Your Reviews" />
+      {/* <TabItem value="reviews" icon={<List />} label="Your Reviews" /> */}
     </Tabs>
   );
 };
