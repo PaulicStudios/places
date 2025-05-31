@@ -2,8 +2,8 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-import { ProductReviewCommitments } from "../src/ProductReviewCommitments.sol";
-import { IWorldID } from "../src/interfaces/IWorldID.sol";
+
+import { ProductReviewCommitments, IWorldID } from "../src/ProductReviewCommitments.sol";
 
 contract MockWorldID is IWorldID {
     function verifyProof(

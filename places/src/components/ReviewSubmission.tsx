@@ -51,17 +51,17 @@ export function ReviewSubmission() {
       }
 
       setVerificationData(finalPayload as ISuccessResult);
-      const response = await fetch('/api/verify-proof', {
-        method: 'POST',
-        body: JSON.stringify({
-          payload: finalPayload,
-          action: process.env.NEXT_PUBLIC_ACTION_ID as string,
-          signal: "COREGAME"
-        }),
-      });
+      // const response = await fetch('/api/verify-proof', {
+      //   method: 'POST',
+      //   body: JSON.stringify({
+      //     payload: finalPayload,
+      //     action: process.env.NEXT_PUBLIC_ACTION_ID as string,
+      //     signal: "COREGAME"
+      //   }),
+      // });
 
-      const data = await response.json();
-      console.log('Verify response:', data);
+      // const data = await response.json();
+      // console.log('Verify response:', data);
 
       setError(null);
     } catch (error) {

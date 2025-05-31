@@ -32,25 +32,6 @@ export async function submitReview(reviewData: ReviewSubmission) {
       throw new Error('Missing required proof data');
     }
 
-    // Ensure proof is properly formatted
-    let proofArray;
-    try {
-      // First try to parse the proof as a hex string
-      if (!reviewData.proof.startsWith('0x')) {
-        throw new Error('Proof must be a hex string starting with 0x');
-      }
-
-      proofArray = decodeAbiParameters(
-        parseAbiParameters('uint256[8]'),
-        reviewData.proof as `0x${string}`
-      )[0];
-
-      console.log('Decoded proof array:', proofArray);
-    } catch (error) {
-      console.error('Error decoding proof:', error);
-      throw new Error(`Failed to decode proof data: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
-
     // Convert all numeric values to BigInt
     const worldIdNullifierHash = BigInt(reviewData.worldIdNullifierHash);
     const root = BigInt(reviewData.root);
@@ -67,7 +48,10 @@ export async function submitReview(reviewData: ReviewSubmission) {
         reviewData.signature,
         worldIdNullifierHash,
         root,
-        proofArray
+        decodeAbiParameters(
+          parseAbiParameters('uint256[8]'),
+          reviewData.proof as `0x${string}`
+        )[0],
       ],
     };
 
