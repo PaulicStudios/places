@@ -78,10 +78,9 @@ export default function BarcodeScannerPage() {
       </Page.Header>
       <Page.Main>
 
-      <div className="container mx-auto px-4 py-6 max-w-2xl">
+      <div className="container mx-auto px-4 py-2 max-w-2xl">
         <div className="text-center mb-8">
-          <Typography variant='heading' level={1}>Barcode Scanner</Typography>
-          <Typography className="text-gray-600">
+          <Typography className="text-gray-900">
             Scan barcodes to get product information
           </Typography>
         </div>
@@ -98,7 +97,7 @@ export default function BarcodeScannerPage() {
             </div>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* Loading indicator when looking up product */}
             {isLookingUp && (
                <div className="border border-gray-200 rounded-lg p-6 shadow-md">
