@@ -78,28 +78,28 @@ export function loadDumbShit() {
       codeType: 'UPC-A',
       name: 'Coca-Cola Classic',
       description: 'Original taste soft drink with sugar and sweeteners',
-      image_url: 'https://example.com/images/coca-cola.jpg'
+      image_url: 'https://www.coca-cola.com/content/dam/onexp/de/de/home-images/brands-images/fanta/fanta-desktop-v2.png'
     },
     {
       code: '5449000000996',
       codeType: 'UPC-A',
       name: 'Sprite',
       description: 'Lemon and lime flavoured soft drink with sugar and sweetener',
-      image_url: 'https://example.com/images/sprite.jpg'
+      image_url: 'https://www.coca-cola.com/content/dam/onexp/de/de/home-images/brands-images/fanta/fanta-desktop-v2.png'
     },
     {
       code: '5000112637236',
       codeType: 'UPC-A',
       name: 'Fanta Orange',
       description: 'Orange flavoured soft drink with sugar and sweeteners',
-      image_url: 'https://example.com/images/fanta.jpg'
+      image_url: 'https://www.coca-cola.com/content/dam/onexp/de/de/home-images/brands-images/fanta/fanta-desktop-v2.png'
     },
     {
       code: '5060335632302',
       codeType: 'UPC-A',
       name: 'Oatly Barista Edition',
       description: 'Oat drink specifically developed for coffee',
-      image_url: 'https://example.com/images/oatly.jpg'
+      image_url: 'https://www.coca-cola.com/content/dam/onexp/de/de/home-images/brands-images/fanta/fanta-desktop-v2.png'
     },
     {
       code: '5060517886554',

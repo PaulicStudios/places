@@ -2,6 +2,7 @@
 
 import { ProductCard, ProductCardGrid, ProductData } from '@/components/ProductCard';
 import { Page } from '@/components/PageLayout';
+import { ProductSearch } from '@/components/ProductSearch';
 
 // Sample product data that matches the database structure
 const sampleProducts: ProductData[] = [
@@ -55,13 +56,26 @@ export default function ProductCardDemo() {
   return (
     <Page>
       <Page.Header>
-        <h1 className="text-2xl font-bold text-gray-900">Product Card Demo</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Product Demo</h1>
         <p className="text-sm text-gray-600 mt-1">
-          Showcasing ProductCard component with Worldcoin UI kit styling
+          Product search and display functionality
         </p>
       </Page.Header>
 
       <Page.Main className="space-y-8">
+        {/* Product Search */}
+        <section>
+          <h2 className="text-lg font-semibold mb-4 text-gray-800">
+            Product Search
+          </h2>
+          <div className="mb-6">
+            <ProductSearch />
+          </div>
+        </section>
+
+        {/* Divider */}
+        <div className="border-t border-gray-200 my-8"></div>
+
         {/* Single Product Card - Interactive */}
         <section>
           <h2 className="text-lg font-semibold mb-4 text-gray-800">
