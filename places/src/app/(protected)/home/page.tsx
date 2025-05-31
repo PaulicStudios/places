@@ -1,11 +1,7 @@
 import { auth } from '@/auth';
 import { Page } from '@/components/PageLayout';
-import { Pay } from '@/components/Pay';
-import { Transaction } from '@/components/Transaction';
-import { UserInfo } from '@/components/UserInfo';
-import { Verify } from '@/components/Verify';
-import { ViewPermissions } from '@/components/ViewPermissions';
 import { Marble, TopBar } from '@worldcoin/mini-apps-ui-kit-react';
+import { ProductSearch } from '@/components/ProductSearch';
 
 export default async function Home() {
   const session = await auth();
@@ -14,10 +10,11 @@ export default async function Home() {
     <>
       <Page.Header className="p-0">
         <TopBar
-          title="Home"
+          className='text-gray-500'
+          title="Reviews"
           endAdornment={
             <div className="flex items-center gap-2">
-              <p className="text-sm font-semibold capitalize">
+              <p className="text-sm font-semibold">
                 {session?.user.username}
               </p>
               <Marble src={session?.user.profilePictureUrl} className="w-12" />
@@ -26,11 +23,7 @@ export default async function Home() {
         />
       </Page.Header>
       <Page.Main className="flex flex-col items-center justify-start gap-4 mb-16">
-        <UserInfo />
-        <Verify />
-        <Pay />
-        <Transaction />
-        <ViewPermissions />
+        <ProductSearch />
       </Page.Main>
     </>
   );
