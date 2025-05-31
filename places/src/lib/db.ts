@@ -78,6 +78,30 @@ export function getProductByCode(code: string) {
   return database.prepare('SELECT * FROM products WHERE code = ?').get(code);
 }
 
+export function AverageStars(id: string) {
+  const database = db();
+  
+  // Get all star ratings for the product
+  const allStars = (database.prepare(`
+    SELECT stars FROM reviews
+    WHERE product_code = ?
+    ORDER BY stars
+  `).all(id) as { stars: number }[]).map(row => row.stars);
+  
+  let median = 0;
+  if (allStars.length > 0) {
+    const mid = Math.floor(allStars.length / 2);
+    const rawMedian = allStars.length % 2 !== 0
+      ? allStars[mid]
+      : (allStars[mid - 1] + allStars[mid]) / 2;
+    
+    // Format to one decimal place
+    median = Math.round(rawMedian * 10) / 10;
+  }
+  
+  return median;
+}
+
 export function saveReview(review: {
   product_code: string;
   name: string;
