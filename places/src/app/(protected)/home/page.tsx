@@ -25,7 +25,8 @@ export default async function Home() {
       </Page.Header>
       <Page.Main className="flex flex-col items-center justify-start gap-4 mb-16">
         <ProductSearch />
-        <Link href="/star-demo" className="text-blue-500 hover:underline">Test</Link>
+        <Link href="/home/product-demo" className="text-blue-500 hover:underline"> Product Test</Link>
+        <Link href="/star-demo" className="text-blue-500 hover:underline">Star Test</Link>
       </Page.Main>
     </>
   );
