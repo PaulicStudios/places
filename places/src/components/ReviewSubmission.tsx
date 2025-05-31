@@ -11,7 +11,11 @@ import { keccak256, encodePacked } from 'viem';
 import { StarRating } from './StarRating';
 import { Typography, Button, TextArea } from '@worldcoin/mini-apps-ui-kit-react';
 
-export function ReviewSubmission() {
+interface ReviewSubmissionProps {
+  productId: string;
+}
+
+export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [transactionId, setTransactionId] = useState<string>('');
   const [verificationData, setVerificationData] = useState<ISuccessResult | null>(null);
@@ -107,7 +111,7 @@ export function ReviewSubmission() {
       
       console.log('Preparing review data...');
       const reviewData: ReviewSubmission = {
-        barcode: "123456789", // Replace with actual barcode
+        barcode: productId, // Use the actual product ID
         reviewer: signPayload.address,
         rating,
         contentHash,
