@@ -160,16 +160,15 @@ export function ReviewSubmission() {
       </Button>
 
       {verificationData && (
-        <button
+        <Button
           onClick={handleSubmitReview}
           disabled={isSubmitting || isConfirming || !content.trim()}
-          className="px-4 py-2 bg-green-500 text-white rounded disabled:bg-gray-400"
         >
           {isSubmitting ? 'Submitting...' : 
            isConfirming ? 'Confirming...' : 
            isConfirmed ? 'Review Submitted!' : 
            'Submit Review'}
-        </button>
+        </Button>
       )}
       
       {error && (
