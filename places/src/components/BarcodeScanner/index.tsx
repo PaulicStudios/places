@@ -2,7 +2,7 @@
 
 import { Button, LiveFeedback, Typography } from '@worldcoin/mini-apps-ui-kit-react';
 import { BrowserMultiFormatReader, NotFoundException } from '@zxing/library';
-import { Camera } from 'iconoir-react';
+import { Camera, Refresh } from 'iconoir-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface BarcodeScannerProps {
@@ -24,6 +24,8 @@ export const BarcodeScanner = ({
   const [scanResult, setScanResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [codeReader, setCodeReader] = useState<BrowserMultiFormatReader | null>(null);
+  const [availableCameras, setAvailableCameras] = useState<MediaDeviceInfo[]>([]);
+  const [preferBackCamera, setPreferBackCamera] = useState(true);
 
   useEffect(() => {
     // Initialize the code reader
@@ -93,6 +95,68 @@ export const BarcodeScanner = ({
     }
   }, [autoStart, codeReader, isScanning]);
 
+  const requestCameraPermission = useCallback(async () => {
+    try {
+      setError(null);
+      
+      // For better iPhone support, try different camera access strategies
+      let stream;
+      
+      try {
+        // First try with the preferred camera mode
+        const facingMode = preferBackCamera ? 'environment' : 'user';
+        stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { 
+            facingMode: { exact: facingMode }
+          } 
+        });
+      } catch {
+        try {
+          // Fallback to preferred mode (not exact)
+          const facingMode = preferBackCamera ? 'environment' : 'user';
+          console.log(`Exact ${facingMode} camera not available, trying preferred mode`);
+          stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { 
+              facingMode: facingMode
+            } 
+          });
+        } catch {
+          // Final fallback - just request any camera
+          console.log('Preferred camera mode not available, requesting any camera');
+          stream = await navigator.mediaDevices.getUserMedia({ 
+            video: true
+          });
+        }
+      }
+      
+      stream.getTracks().forEach(track => track.stop()); 
+      setHasPermission(true);
+      return true;
+    } catch (err) {
+      console.error('Camera permission error:', err);
+      setHasPermission(false);
+      
+      if (err instanceof DOMException) {
+        switch (err.name) {
+          case 'NotAllowedError':
+            setError('Camera permission denied. Please enable camera access in your browser settings.');
+            break;
+          case 'NotFoundError':
+            setError('No camera found on this device.');
+            break;
+          case 'NotSupportedError':
+            setError('Camera access is not supported in this browser.');
+            break;
+          default:
+            setError('Failed to access camera. Please check your permissions.');
+        }
+      } else {
+        setError('Failed to request camera permission');
+      }
+      return false;
+    }
+  }, [preferBackCamera]);
+
   const startScanning = useCallback(async () => {
     if (!codeReader || !videoRef.current) return;
 
@@ -110,23 +174,56 @@ export const BarcodeScanner = ({
       }
 
       const videoInputDevices = await codeReader.listVideoInputDevices();
+      setAvailableCameras(videoInputDevices);
       
       if (videoInputDevices.length === 0) {
         throw new Error('No camera devices found');
       }
 
-      let selectedDeviceId = videoInputDevices[0].deviceId; // Default to first camera
+      let selectedDeviceId: string;
       
-      const backCamera = videoInputDevices.find(device => {
-        const label = device.label.toLowerCase();
-        return label.includes('back') || label.includes('environment') || label.includes('rear');
-      });
-      
-      if (backCamera) {
-        selectedDeviceId = backCamera.deviceId;
-        console.log('Using back camera:', backCamera.label);
+      if (preferBackCamera) {
+        // Try multiple strategies to find the back camera, especially for iPhones
+        const backCamera = videoInputDevices.find(device => {
+          const label = device.label.toLowerCase();
+          // Enhanced detection for various camera labels
+          return label.includes('back') || 
+                 label.includes('environment') || 
+                 label.includes('rear') ||
+                 label.includes('main') ||
+                 // Common iPhone patterns
+                 label.includes('camera 0') ||
+                 // Fallback: if multiple cameras, prefer the second one on iOS (often the back camera)
+                 (navigator.userAgent.includes('iPhone') && videoInputDevices.indexOf(device) === 1);
+        });
+        
+        // If we can't find a back camera by label, use a fallback strategy
+        if (backCamera) {
+          selectedDeviceId = backCamera.deviceId;
+          console.log('Using back camera:', backCamera.label);
+        } else if (videoInputDevices.length > 1) {
+          // For iPhones, the back camera is often at index 1 when multiple cameras exist
+          const isIPhone = navigator.userAgent.includes('iPhone');
+          selectedDeviceId = isIPhone ? videoInputDevices[1].deviceId : videoInputDevices[0].deviceId;
+          console.log(`Using camera ${isIPhone ? '1' : '0'} as fallback back camera:`, 
+                     videoInputDevices[isIPhone ? 1 : 0].label);
+        } else {
+          selectedDeviceId = videoInputDevices[0].deviceId;
+          console.log('Only one camera available:', videoInputDevices[0].label);
+        }
       } else {
-        console.log('Back camera not found, using:', videoInputDevices[0].label);
+        // Use front camera - typically the first one or one with 'front'/'user' in the label
+        const frontCamera = videoInputDevices.find(device => {
+          const label = device.label.toLowerCase();
+          return label.includes('front') || 
+                 label.includes('user') || 
+                 label.includes('selfie') ||
+                 // On iPhone, front camera is often camera 1 or the first one
+                 (navigator.userAgent.includes('iPhone') && videoInputDevices.indexOf(device) === 0);
+        });
+        
+        selectedDeviceId = frontCamera ? frontCamera.deviceId : videoInputDevices[0].deviceId;
+        console.log('Using front camera:', frontCamera?.label || videoInputDevices[0].label);
       }
 
       const result = await codeReader.decodeOnceFromVideoDevice(selectedDeviceId, videoRef.current);
@@ -187,65 +284,13 @@ export const BarcodeScanner = ({
       
       setIsScanning(false);
     }
-  }, [codeReader, videoRef, hasPermission, onScanResult, continuousScanning, isScanning]);
+  }, [codeReader, videoRef, hasPermission, onScanResult, continuousScanning, isScanning, preferBackCamera, requestCameraPermission]);
 
   useEffect(() => {
     if (isScanning && codeReader) {
       startScanning();
     }
   }, [isScanning, codeReader, startScanning]);
-
-  const requestCameraPermission = async () => {
-    try {
-      setError(null);
-      
-      // For Mini Apps, camera permission is handled by the browser
-      // We'll try to access the camera directly and handle the permission through the browser API
-      let stream;
-      
-      try {
-        // First try to force the back camera
-        stream = await navigator.mediaDevices.getUserMedia({ 
-          video: { 
-            facingMode: { exact: 'environment' } // Force back camera (not selfie)
-          } 
-        });
-      } catch {
-        console.log('Exact environment camera not available, trying preferred mode');
-        stream = await navigator.mediaDevices.getUserMedia({ 
-          video: { 
-            facingMode: 'environment' // Prefer back camera
-          } 
-        });
-      }
-      
-      stream.getTracks().forEach(track => track.stop()); 
-      setHasPermission(true);
-      return true;
-    } catch (err) {
-      console.error('Camera permission error:', err);
-      setHasPermission(false);
-      
-      if (err instanceof DOMException) {
-        switch (err.name) {
-          case 'NotAllowedError':
-            setError('Camera permission denied. Please enable camera access in your browser settings.');
-            break;
-          case 'NotFoundError':
-            setError('No camera found on this device.');
-            break;
-          case 'NotSupportedError':
-            setError('Camera access is not supported in this browser.');
-            break;
-          default:
-            setError('Failed to access camera. Please check your permissions.');
-        }
-      } else {
-        setError('Failed to request camera permission');
-      }
-      return false;
-    }
-  };
 
   const stopScanning = () => {
     try {
@@ -276,6 +321,17 @@ export const BarcodeScanner = ({
     startScanning();
   };
 
+  const switchCamera = () => {
+    setPreferBackCamera(!preferBackCamera);
+    if (isScanning) {
+      // Stop current scanning and restart with new camera
+      stopScanning();
+      setTimeout(() => {
+        setIsScanning(true);
+      }, 100);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center gap-4 p-4">
       <div className="relative w-full max-w-md aspect-square bg-gray-100 rounded-lg overflow-hidden">
@@ -286,6 +342,16 @@ export const BarcodeScanner = ({
           playsInline
           muted
         />
+        {/* Camera switch button - only show when multiple cameras are available */}
+        {availableCameras.length > 1 && (
+          <button
+            onClick={switchCamera}
+            className="absolute top-3 right-3 w-10 h-10 bg-black bg-opacity-50 hover:bg-opacity-70 rounded-full flex items-center justify-center transition-all duration-200 z-10"
+            aria-label={`Switch to ${preferBackCamera ? 'front' : 'back'} camera`}
+          >
+            <Refresh className="w-5 h-5 text-white" />
+          </button>
+        )}
         {isScanning && (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-48 h-48 border-2 border-blue-500 rounded-lg animate-pulse">
