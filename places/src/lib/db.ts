@@ -26,7 +26,8 @@ export function db(): Database.Database {
         product_code TEXT NOT NULL,
         name TEXT NOT NULL,
         description TEXT NOT NULL,
-        stars INTEGER NOT NULL CHECK(stars BETWEEN 1 AND 5)
+        stars INTEGER NOT NULL CHECK(stars BETWEEN 1 AND 5),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
     loadDumbShit();
@@ -99,14 +100,28 @@ export function saveReview(review: {
   );
 }
 
-export function findReviews(product_code: string) {
+export function findPagenatedReviews(id: string, fromReview: number, toReview: number) {
+  const database = db();
+  
+  const offset = fromReview - 1;
+  const limit = toReview - fromReview + 1;
+  
+  return database.prepare(`
+    SELECT * FROM reviews 
+    WHERE product_code = ? 
+    ORDER BY created_at DESC, review_id DESC
+    LIMIT ? OFFSET ?
+  `).all(id, limit, offset);
+}
+
+export function findAllReviews(id: string) {
   const database = db();
   
   return database.prepare(`
     SELECT * FROM reviews 
     WHERE product_code = ? 
     ORDER BY review_id DESC
-  `).all(product_code);
+  `).all(id);
 }
 
 export function loadDumbShit() {
