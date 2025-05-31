@@ -1,3 +1,4 @@
+'use client';
 import { auth } from '@/auth';
 import { Page } from '@/components/PageLayout';
 import { Pay } from '@/components/Pay';
@@ -5,9 +6,11 @@ import { Transaction } from '@/components/Transaction';
 import { UserInfo } from '@/components/UserInfo';
 import { Verify } from '@/components/Verify';
 import { ViewPermissions } from '@/components/ViewPermissions';
-import { Marble, TopBar } from '@worldcoin/mini-apps-ui-kit-react';
+import { Button, Marble, TopBar } from '@worldcoin/mini-apps-ui-kit-react';
+import { useRouter } from 'next/navigation';
 
 export default async function Home() {
+  const router = useRouter();
   const session = await auth();
 
   return (
@@ -26,11 +29,15 @@ export default async function Home() {
         />
       </Page.Header>
       <Page.Main className="flex flex-col items-center justify-start gap-4 mb-16">
+      <Button onClick={() => {
+          router.push('/test-scanner');
+        }}>Test Scanner</Button>
         <UserInfo />
         <Verify />
         <Pay />
         <Transaction />
         <ViewPermissions />
+        
       </Page.Main>
     </>
   );

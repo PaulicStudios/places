@@ -1,11 +1,11 @@
 import { Page } from '@/components/PageLayout';
-import { AuthButton } from '../components/AuthButton';
+import TestScannerPage from './test-scanner/page';
 
-export default function Home() {
+export default function Home() { 
   return (
     <Page>
       <Page.Main className="flex flex-col items-center justify-center">
-        <AuthButton />
+        <TestScannerPage />
       </Page.Main>
     </Page>
   );
