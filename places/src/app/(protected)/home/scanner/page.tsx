@@ -55,7 +55,7 @@ export default function BarcodeScannerPage() {
 
   const goToProductPage = (productId: string) => {
     if (!productId) return;
-    router.push(`/home/product-demo?id=${encodeURIComponent(productId)}`);
+    router.push(`/product/${encodeURIComponent(productId)}`);
   };
 
   const addReview = (productId: string) => {
@@ -160,7 +160,7 @@ export default function BarcodeScannerPage() {
                   Product ID: {scannedProduct.code || scannedProduct.id || 'Unknown'}
                 </Typography>
 
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex flex-col sm:flex-row gap-3 mt-2">
                   <Button
                     onClick={() => goToProductPage(scannedProduct.id || scannedProduct.code || '')}
                     variant="secondary"
