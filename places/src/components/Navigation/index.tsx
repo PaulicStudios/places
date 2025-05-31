@@ -1,25 +1,50 @@
 'use client';
 
 import { TabItem, Tabs } from '@worldcoin/mini-apps-ui-kit-react';
-import { Bank, Home, User } from 'iconoir-react';
-import { useState } from 'react';
-
-/**
- * This component uses the UI Kit to navigate between pages
- * Bottom navigation is the most common navigation pattern in Mini Apps
- * We require mobile first design patterns for mini apps
- * Read More: https://docs.world.org/mini-apps/design/app-guidelines#mobile-first
- */
+import { Home, ScanBarcode } from 'iconoir-react';
+import { useRouter, usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export const Navigation = () => {
+  const router = useRouter();
+  const pathname = usePathname();
   const [value, setValue] = useState('home');
 
+  useEffect(() => {
+    console.log('Current pathname:', pathname); // Debug log
+    if (pathname === '/home' || pathname === '/') {
+      setValue('home');
+    } else if (pathname === '/scanner' || pathname === '/home/scanner') {
+      setValue('scanner');
+    } else if (pathname.includes('reviews')) {
+      setValue('reviews');
+    }
+  }, [pathname]);
+
+  const handleTabChange = (newValue: string) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Tab changed to:', newValue); // Debug log
+    }
+    setValue(newValue);
+    
+    switch (newValue) {
+      case 'home':
+        router.push('/home');
+        break;
+      case 'scanner':
+        router.push('/home/scanner'); // Use the protected route
+        break;
+      case 'reviews':
+        console.log('Reviews page not implemented yet');
+        break;
+    }
+  };
+
   return (
-    <Tabs value={value} onValueChange={setValue}>
+    <Tabs value={value} onValueChange={handleTabChange} className='mt-2'>
       <TabItem value="home" icon={<Home />} label="Home" />
-      {/* // TODO: These currently don't link anywhere */}
-      <TabItem value="wallet" icon={<Bank />} label="Wallet" />
-      <TabItem value="profile" icon={<User />} label="Profile" />
+      <TabItem value="scanner" icon={<ScanBarcode />} label="Scanner" />
+      {/* <TabItem value="reviews" icon={<List />} label="Your Reviews" /> */}
     </Tabs>
   );
 };
