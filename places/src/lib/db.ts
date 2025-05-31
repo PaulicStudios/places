@@ -19,6 +19,7 @@ export function db(): Database.Database {
         image_url TEXT NOT NULL
       );
     `);
+    loadDumbShit();
   }
 
   //always return the instance of the db
@@ -60,4 +61,103 @@ export function saveProduct(product: {
     product.description, 
     product.image_url
   );
+}
+
+export function loadDumbShit() {
+  const database = db();
+  
+  const stmt = database.prepare(`
+    INSERT INTO products (code, codeType, name, description, image_url)
+    VALUES (?, ?, ?, ?, ?)
+  `);
+  
+  // Sample product data
+  const products = [
+    {
+      code: '5000112654042',
+      codeType: 'UPC-A',
+      name: 'Coca-Cola Classic',
+      description: 'Original taste soft drink with sugar and sweeteners',
+      image_url: 'https://example.com/images/coca-cola.jpg'
+    },
+    {
+      code: '5449000000996',
+      codeType: 'UPC-A',
+      name: 'Sprite',
+      description: 'Lemon and lime flavoured soft drink with sugar and sweetener',
+      image_url: 'https://example.com/images/sprite.jpg'
+    },
+    {
+      code: '5000112637236',
+      codeType: 'UPC-A',
+      name: 'Fanta Orange',
+      description: 'Orange flavoured soft drink with sugar and sweeteners',
+      image_url: 'https://example.com/images/fanta.jpg'
+    },
+    {
+      code: '5060335632302',
+      codeType: 'UPC-A',
+      name: 'Oatly Barista Edition',
+      description: 'Oat drink specifically developed for coffee',
+      image_url: 'https://example.com/images/oatly.jpg'
+    },
+    {
+      code: '5060517886554',
+      codeType: 'UPC-A',
+      name: 'Beyond Burger',
+      description: 'Plant-based burger that looks and cooks like beef',
+      image_url: 'https://example.com/images/beyond.jpg'
+    },
+    {
+      code: '8410199074037',
+      codeType: 'EAN-13',
+      name: 'Pringles Original',
+      description: 'Original flavour potato crisps',
+      image_url: 'https://example.com/images/pringles.jpg'
+    },
+    {
+      code: '5010477348678',
+      codeType: 'UPC-A',
+      name: 'Doritos Cool Original',
+      description: 'Cool original flavour corn chips',
+      image_url: 'https://example.com/images/doritos.jpg'
+    },
+    {
+      code: '8001505005738',
+      codeType: 'EAN-13',
+      name: 'Nutella',
+      description: 'Hazelnut spread with cocoa',
+      image_url: 'https://example.com/images/nutella.jpg'
+    },
+    {
+      code: '5000168189585',
+      codeType: 'UPC-A',
+      name: 'Heinz Tomato Ketchup',
+      description: 'Classic tomato ketchup condiment',
+      image_url: 'https://example.com/images/heinz.jpg'
+    },
+    {
+      code: '3046920022651',
+      codeType: 'EAN-13',
+      name: 'Lindt Excellence 85% Cocoa',
+      description: 'Dark chocolate with 85% cocoa content',
+      image_url: 'https://example.com/images/lindt.jpg'
+    }
+  ];
+  
+  // Insert all products
+  const results = products.map(product => {
+    return stmt.run(
+      product.code,
+      product.codeType,
+      product.name,
+      product.description,
+      product.image_url
+    );
+  });
+  
+  return {
+    insertedCount: results.filter(r => r.changes > 0).length,
+    totalAttempted: products.length
+  };
 }
