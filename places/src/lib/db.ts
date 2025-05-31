@@ -6,6 +6,7 @@ const dbPath = process.env.PATH_TO_DB;
 let _db: Database.Database | null = null;
 
 export function db(): Database.Database {
+  // check if db is available if not create a new instance and make a table
   if (!_db) {
     _db = new Database(dbPath);
     
@@ -19,6 +20,8 @@ export function db(): Database.Database {
       );
     `);
   }
+
+  //always return the instance of the db
   return _db;
 }
 
