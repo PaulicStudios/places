@@ -4,10 +4,12 @@ import { useState } from 'react';
 import { useWaitForTransactionReceipt } from '@worldcoin/minikit-react';
 import { createPublicClient, http } from 'viem';
 import { worldchain } from 'viem/chains';
-import { MiniKit, VerificationLevel, ISuccessResult, verifyCloudProof } from '@worldcoin/minikit-js';
+import { MiniKit, VerificationLevel, ISuccessResult } from '@worldcoin/minikit-js';
 import { submitReview } from '@/utils/review';
 import type { ReviewSubmission } from '@/utils/review';
 import { keccak256, encodePacked } from 'viem';
+import { StarRating } from './StarRating';
+import { Typography, Button, TextArea } from '@worldcoin/mini-apps-ui-kit-react';
 
 export function ReviewSubmission() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -131,41 +133,31 @@ export function ReviewSubmission() {
   return (
     <div className="p-4 space-y-4">
       <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">
-          Rating
-        </label>
-        <select
+        <StarRating
           value={rating}
-          onChange={(e) => setRating(Number(e.target.value))}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-        >
-          {[1, 2, 3, 4, 5].map((value) => (
-            <option key={value} value={value}>
-              {value} {value === 1 ? 'star' : 'stars'}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">
-          Review Content
-        </label>
-        <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          rows={4}
-          placeholder="Write your review here..."
+          onChange={(value) => setRating(value)}
+          allowHalf={true}
+          sliderMode={true}
+          interactive={true}
+          className="flex space-x-1"
         />
       </div>
 
-      <button
+      <div className="space-y-2">
+        <Typography className="font-medium text-gray-600">Text</Typography>
+        <TextArea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          rows={4}
+        />
+      </div>
+
+      <Button
         onClick={handleVerify}
-        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        variant="primary"
       >
         Verify with World ID
-      </button>
+      </Button>
 
       {verificationData && (
         <button

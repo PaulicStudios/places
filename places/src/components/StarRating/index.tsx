@@ -11,7 +11,7 @@ const sliderStyles = `
     height: 20px;
     width: 20px;
     border-radius: 50%;
-    background: #f59e0b;
+    background: #181818;
     cursor: pointer;
     border: 2px solid #ffffff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -27,7 +27,7 @@ const sliderStyles = `
     height: 20px;
     width: 20px;
     border-radius: 50%;
-    background: #f59e0b;
+    background: #717680;
     cursor: pointer;
     border: 2px solid #ffffff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -44,7 +44,7 @@ const sliderStyles = `
   }
   
   .slider-thumb:focus::-webkit-slider-thumb {
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3);
+    box-shadow: 0 0 0 3px rgba(113, 118, 128, 0.3);
   }
 `;
 
@@ -184,7 +184,7 @@ export const StarRating = ({
             disabled={!interactive}
             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb"
             style={{
-              background: `linear-gradient(to right, #f59e0b 0%, #f59e0b ${(value / maxStars) * 100}%, #e5e7eb ${(value / maxStars) * 100}%, #e5e7eb 100%)`
+              background: `linear-gradient(to right, #b1b8c2 0%, #b1b8c2 ${(value / maxStars) * 100}%, #e5e7eb ${(value / maxStars) * 100}%, #e5e7eb 100%)`
             }}
           />
         </div>

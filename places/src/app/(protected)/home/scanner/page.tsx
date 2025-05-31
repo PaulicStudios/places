@@ -60,7 +60,7 @@ export default function BarcodeScannerPage() {
 
   const addReview = (productId: string) => {
     if (!productId) return;
-    router.push(`/home/reviews/new?id=${encodeURIComponent(productId)}`);
+    router.push(`/review/new/${encodeURIComponent(productId)}`);
   };
 
   const scanAgain = () => {
