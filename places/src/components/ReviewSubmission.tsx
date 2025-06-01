@@ -98,16 +98,14 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
       const result = await submitReview(reviewData);
       console.log('Review submission result:', result);
       setTransactionId(result.transactionId);
-      // console.log('Receipt:', receipt);
 
-      // const reviewResult = await SaveReviewSubmitDB({
+      // SaveReviewDB({
       //   product_code: productId,
       //   name: "Anonymous",
       //   description: content,
       //   stars: rating,
       //   transactionId: result.transactionId,
       // });
-      // console.log('Review submission result:', reviewResult);
 
       // if (!reviewResult.success) {
       //   throw new Error(reviewResult.error || 'Failed to save review');
@@ -123,6 +121,9 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
 
   return (
     <div className="p-4 space-y-4">
+      {receipt && (
+        <p>{receipt.transactionHash}</p>
+)}
       {isConfirmed ? (
         <div className="flex flex-col items-center justify-center space-y-4 py-8">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">

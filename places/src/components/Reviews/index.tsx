@@ -14,7 +14,7 @@ export interface ReviewSubmissionDB {
   transactionId: string;
 }
 
-export default async function ReviewSubmit(
+export default async function SaveReviewDB(
   submission: ReviewSubmissionDB
 ) {
   if (!submission.description || submission.description.trim().length === 0) {
