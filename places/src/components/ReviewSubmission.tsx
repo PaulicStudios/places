@@ -10,6 +10,7 @@ import type { ReviewSubmission } from '@/utils/review';
 import { keccak256, encodePacked } from 'viem';
 import { StarRating } from './StarRating';
 import { Typography, Button, TextArea } from '@worldcoin/mini-apps-ui-kit-react';
+import ReviewSubmit from './Reviews';
 
 interface ReviewSubmissionProps {
   productId: string;
@@ -18,7 +19,6 @@ interface ReviewSubmissionProps {
 export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [transactionId, setTransactionId] = useState<string>('');
-  const [verificationData, setVerificationData] = useState<ISuccessResult | null>(null);
   const [content, setContent] = useState('');
   const [rating, setRating] = useState(5);
   const [error, setError] = useState<string | null>(null);
@@ -65,8 +65,6 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
         throw new Error('Verification failed');
       }
 
-      setVerificationData(verifyPayload as ISuccessResult);
-
       // Step 2: Sign the review content
       console.log('Starting message signing...');
       const { finalPayload: signPayload } = await MiniKit.commandsAsync.signMessage({
@@ -81,8 +79,8 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
 
       // Step 3: Calculate content hash and submit review
       const contentHash = keccak256(encodePacked(
-        ['string', 'uint8'],
-        [content, rating]
+        ['string', 'uint8', 'string'],
+        [productId, rating, content]
       ));
       
       console.log('Preparing review data...');
@@ -102,6 +100,15 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
       console.log('Review submission result:', result);
       
       setTransactionId(result.transactionId);
+
+      const reviewResult = await ReviewSubmit({
+        product_code: productId,
+        name: "Anonymous",
+        description: content,
+        stars: rating,
+        transactionId: result.transactionId,
+      });
+      console.log('Review submission result:', reviewResult);
     } catch (error) {
       console.error('Failed to submit review:', error);
       setError(error instanceof Error ? error.message : 'Failed to submit review');

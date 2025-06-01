@@ -27,7 +27,6 @@ export default function NewReviewPage() {
           <Page.Main className="space-y-6 pb-20">
             <ReviewSubmission productId={productId} />
         </Page.Main>
-        
     </Page>
   );
 }
