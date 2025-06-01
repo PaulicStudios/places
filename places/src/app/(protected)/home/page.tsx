@@ -17,7 +17,9 @@ export default async function Home() {
               <Typography className="font-semibold">
                 {session?.user.username}
               </Typography>
-              <Marble src={session?.user.profilePictureUrl} className="w-12" />
+              {session?.user.profilePictureUrl && (
+                <Marble src={session.user.profilePictureUrl} className="w-12" />
+              )}
             </div>
           }
         />

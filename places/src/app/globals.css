@@ -23,8 +23,9 @@ body {
 }
 
 .gradient-bg {
-  background-color: hsla(276, 100%, 50%, 0.76);
-  background-image: radial-gradient(ellipse farthest-side at left top, hsla(276, 100%, 50%, 0.77) 0%, hsla(60, 100%, 50%, 0.69) 85%, hsla(276, 100%, 50%, 0.76) 120%);
+  /* background-color: hsla(276, 100%, 50%, 0.76);
+  background-image: radial-gradient(ellipse farthest-side at left top, hsla(276, 100%, 50%, 0.77) 0%, hsla(60, 100%, 50%, 0.69) 85%, hsla(276, 100%, 50%, 0.76) 120%); */
+  border-bottom: 1px solid var(--color-gray-300);
 }
 
 html,
