@@ -13,6 +13,7 @@ export async function checkTransactionStatus(transactionId: string) {
     );
     
     const data = await response.json();
+    console.log('Transaction status data:', data);
     return {
       success: true,
       status: data.transactionStatus,
