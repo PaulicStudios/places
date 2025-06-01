@@ -81,8 +81,8 @@ export const StarRating = ({
   const handleStarClick = (rating: number) => {
     if (interactive && onChange && !sliderMode) {
       MiniKit.commands.sendHapticFeedback({
-        hapticsType: 'notification',
-        style: 'success'
+        hapticsType: 'impact',
+        style: 'light'
       });
       onChange(rating);
     }
@@ -105,8 +105,7 @@ export const StarRating = ({
       const newValue = parseFloat(e.target.value);
       // Use selection haptic for slider changes
      MiniKit.commands.sendHapticFeedback({
-        hapticsType: 'notification',
-        style: 'success'
+        hapticsType: 'selection-changed',
       });
       onChange(newValue);
     }

@@ -4,9 +4,9 @@ import { findAllReviews } from '@/lib/db';
 interface Review {
   review_id: number;
   product_code: string;
-  name: string;
   description: string;
   stars: number;
+  transactional_id: string;
   created_at?: string;
 }
 

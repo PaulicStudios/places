@@ -13,9 +13,9 @@ import Image from 'next/image';
 interface Review {
   review_id: number;
   product_code: string;
-  name: string;
   description: string;
   stars: number;
+  transactional_id: string;
   created_at?: string;
 }
 
@@ -268,12 +268,12 @@ export default function ProductPage() {
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
                         <Typography className="text-white font-semibold text-sm">
-                          {review.name.charAt(0).toUpperCase()}
+                          {review.transactional_id ? review.transactional_id.charAt(0).toUpperCase() : 'U'}
                         </Typography>
                       </div>
                       <div>
                         <Typography className="font-semibold text-gray-900">
-                          {review.name}
+                          User {review.review_id}
                         </Typography>
                         {review.created_at && (
                           <Typography className="text-gray-500 text-sm">
