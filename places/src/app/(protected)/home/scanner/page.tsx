@@ -22,6 +22,7 @@ export default function BarcodeScannerPage() {
   const [isScanning, setIsScanning] = useState(true); // Start scanning immediately
   const [isLookingUp, setIsLookingUp] = useState(false);
   const [scannedProduct, setScannedProduct] = useState<Product | null>(null);
+  const [dataReturnvalue, setDataReturnvalue] = useState<number>(200);
 
   const handleScanResult = async (code: string) => {
     // Stop scanning immediately when a result is found
@@ -33,6 +34,7 @@ export default function BarcodeScannerPage() {
       const response = await fetch(`/api/search?id=${encodeURIComponent(code)}`);
       if (response.ok) {
         const data = await response.json();
+        setDataReturnvalue(200);
         
         // Handle both single product response and array response
         if (Array.isArray(data) && data.length > 0) {
@@ -43,6 +45,8 @@ export default function BarcodeScannerPage() {
           // No products found, just save the code
           setScannedProduct({ code });
         }
+      } else {
+        setDataReturnvalue(response.status);
       }
     } catch (error) {
       console.error('Failed to lookup product info:', error);
@@ -81,7 +85,7 @@ export default function BarcodeScannerPage() {
       <div className="container mx-auto px-4 py-2 max-w-2xl">
         <div className="text-center mb-8">
           <Typography className="text-gray-900">
-            Scan barcodes to get product information
+            {dataReturnvalue === 200 ? "Scan barcodes to get product information" : "Lookup failed, check the validity of your barcode."}
           </Typography>
         </div>
 
