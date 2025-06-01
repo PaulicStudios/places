@@ -16,6 +16,28 @@ Review solves the problem of fake reviews and review spam by requiring World ID
 - **🚀 Real-time Product Lookup**: Automatic product information retrieval from external APIs
 - **💾 Smart Caching**: Local database caching reduces API calls and improves performance
 
+## 🚀 Getting Started
+To run the Reviews MiniApp locally, follow these steps:
+1. **Clone the repository**
+1. **Install dependencies**:
+   - Run `cd places && npm install`
+1. **Create a World Mini App in the Worldcoin Developer Portal**
+   - Select Mini-App & On-Chain
+   - Set the URL to a tunneled local server (e.g., using `ngrok`)
+1. **Create an account with Go-UPC**
+   - Sign up at [Go-UPC](https://go-upc.com/)
+   - Obtain your API key
+1. **Set up environment variables**
+   - Create a `.env.local` file in the `places` directory (see `.env.sample` for reference)
+   - Add your Worldcoin Mini App credentials and API keys
+1. **Deploy the smart contract:**
+   - Sign up on [alchemy.com](https://alchemy.com) and create a new app to get your RPC URL
+   - run `forge script script/Deploy.s.sol:DeployScript --rpc-url <URL> --broadcast` to deploy the smart contract
+1. **Download the World App**
+   - Install the [World App](https://worldcoin.org/world-app) on your mobile device
+1. **Run the app**:
+   - Scan the QR code in the World Developer Portal to open the Mini App in World App
+
 ## 🛠️ Tech Stack
 
 ### Frontend
@@ -44,38 +66,3 @@ Review solves the problem of fake reviews and review spam by requiring World ID
 4. **View Product Details** with images and descriptions
 5. **Leave Reviews** with star ratings and comments
 6. **Browse Reviews** from other verified users
-
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- [Worldcoin](https://worldcoin.org) for the Mini App platform and World ID
-- [Mini Apps UI Kit](https://github.com/worldcoin/mini-apps-ui-kit) for design components
-- [ZXing](https://github.com/zxing-js/library) for barcode scanning capabilities
-- [Go-UPC](https://go-upc.com) for product information API
-
-## 🐛 Issues & Support
-
-If you encounter any issues or have questions:
-1. Check the [Issues](../../issues) page
-2. Review the [Worldcoin Mini Apps documentation](https://docs.worldcoin.org/mini-apps)
-3. Create a new issue with detailed information
-
-<br>
-<br>
-
----
-
-Built with ❤️ for the Worldcoin ecosystem
