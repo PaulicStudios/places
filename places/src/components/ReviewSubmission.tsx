@@ -97,6 +97,8 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
       return;
     }
 
+    const scaledRating = rating * 2; // Convert to 0-10 scale
+
     try {
       setIsSubmitting(true);
       setError(null);
@@ -130,14 +132,14 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
       // Step 3: Calculate content hash and submit review
       const contentHash = keccak256(encodePacked(
         ['string', 'uint8', 'string'],
-        [productId, rating, content]
+        [productId, scaledRating, content]
       ));
       
       console.log('Preparing review data...');
       const reviewData: ReviewSubmission = {
         barcode: productId,
         reviewer: signPayload.address,
-        rating,
+        rating: scaledRating,
         contentHash,
         signature: signPayload.signature,
         worldIdNullifierHash: verifyPayload.nullifier_hash,
