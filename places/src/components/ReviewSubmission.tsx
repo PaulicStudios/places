@@ -10,7 +10,7 @@ import type { ReviewSubmission } from '@/utils/review';
 import { keccak256, encodePacked } from 'viem';
 import { StarRating } from './StarRating';
 import { Typography, Button, TextArea } from '@worldcoin/mini-apps-ui-kit-react';
-import { checkTransactionStatus } from '@/app/actions/checkTransaction';
+import SaveReviewDB, { ReviewSubmissionDB } from './Reviews';
 
 interface ReviewSubmissionProps {
   productId: string;
@@ -19,11 +19,10 @@ interface ReviewSubmissionProps {
 export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [transactionId, setTransactionId] = useState<string>('');
-  const [transactionHash, setTransactionHash] = useState<string | null>(null);
-  const [isPolling, setIsPolling] = useState(false);
   const [content, setContent] = useState('');
   const [rating, setRating] = useState(5);
   const [error, setError] = useState<string | null>(null);
+  const [reviewResult, setReviewResult] = useState<ReviewSubmissionDB | null>(null);
 
   const client = createPublicClient({
     chain: worldchain,
@@ -38,53 +37,13 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
     transactionId: transactionId,
   });
 
-  // Add polling effect
   useEffect(() => {
-    let pollInterval: NodeJS.Timeout;
-
-    const pollTransaction = async () => {
-      if (!transactionId) return;
-
-      setIsPolling(true);
-      let attempts = 0;
-      const maxAttempts = 30; // 5 minutes with 10-second intervals
-
-      const checkStatus = async () => {
-        attempts++;
-        console.log(`Polling attempt ${attempts} for transaction ${transactionId}`);
-
-        const result = await checkTransactionStatus(transactionId);
-        
-        if (result.success && result.hash) {
-          console.log('Transaction hash received:', result.hash);
-          setTransactionHash(result.hash);
-          setIsPolling(false);
-          clearInterval(pollInterval);
-        } else if (attempts >= maxAttempts) {
-          console.log('Max polling attempts reached');
-          setIsPolling(false);
-          clearInterval(pollInterval);
-          setError('Transaction status check timed out');
-        }
-      };
-
-      // Initial check
-      await checkStatus();
-      
-      // Set up interval for subsequent checks
-      pollInterval = setInterval(checkStatus, 10000); // Poll every 10 seconds
-    };
-
-    if (transactionId && !isPolling) {
-      pollTransaction();
+    if (!receipt || !reviewResult) {
+      return;
     }
 
-    return () => {
-      if (pollInterval) {
-        clearInterval(pollInterval);
-      }
-    };
-  }, [transactionId, isPolling]);
+    SaveReviewDB(reviewResult);
+  }, [receipt]);
 
   const handleReviewSubmission = async () => {
     if (!content.trim()) {
@@ -151,19 +110,13 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
       const result = await submitReview(reviewData);
       console.log('Review submission result:', result);
       setTransactionId(result.transactionId);
-
-      // SaveReviewDB({
-      //   product_code: productId,
-      //   name: "Anonymous",
-      //   description: content,
-      //   stars: rating,
-      //   transactionId: result.transactionId,
-      // });
-
-      // if (!reviewResult.success) {
-      //   throw new Error(reviewResult.error || 'Failed to save review');
-      // }
-
+      setReviewResult({
+        product_code: productId,
+        name: "Anonymous",
+        description: content,
+        stars: rating,
+        transactionId: result.transactionId,
+      });
     } catch (error) {
       console.error('Failed to submit review:', error);
       setError(error instanceof Error ? error.message : 'Failed to submit review');
@@ -174,9 +127,6 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
 
   return (
     <div className="p-4 space-y-4">
-      {receipt && (
-        <p>{receipt.transactionHash}</p>
-      )}
       {isConfirmed ? (
         <div className="flex flex-col items-center justify-center space-y-4 py-8">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
@@ -200,13 +150,16 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
           <Typography className="text-center text-gray-600">
             Thank you for your review. Your contribution helps others make informed decisions.
           </Typography>
-          {transactionHash && (
+          {receipt && (
             <a
-              href={`https://explorer.worldcoin.org/tx/${transactionHash}`}
+              href={`https://worldchain-mainnet.explorer.alchemy.com/tx/${receipt.transactionHash}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 underline"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200"
             >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
               View Transaction on Explorer
             </a>
           )}
@@ -237,12 +190,11 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
             <Button
               onClick={handleReviewSubmission}
               variant="primary"
-              disabled={isSubmitting || isConfirming || isPolling || !content.trim()}
+              disabled={isSubmitting || isConfirming || !content.trim()}
               className="min-w-[200px]"
             >
               {isSubmitting ? 'Submitting...' : 
-               isConfirming ? 'Confirming...' : 
-               isPolling ? 'Waiting for confirmation...' : 
+               isConfirming ? 'Confirming...' :
                'Submit Review'}
             </Button>
           </div>
