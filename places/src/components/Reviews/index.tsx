@@ -21,9 +21,9 @@ export default async function ReviewSubmit(
     submission.description = "No description was provided!";
   }
 
-  if (submission.stars < 1 || submission.stars > 5) {
-    if (submission.stars < 1)
-      submission.stars = 1;
+  if (submission.stars < 0 || submission.stars > 5) {
+    if (submission.stars < 0)
+      submission.stars = 0;
     if (submission.stars > 5)
       submission.stars = 5;
   }

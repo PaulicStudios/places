@@ -10,7 +10,7 @@ import type { ReviewSubmission } from '@/utils/review';
 import { keccak256, encodePacked } from 'viem';
 import { StarRating } from './StarRating';
 import { Typography, Button, TextArea } from '@worldcoin/mini-apps-ui-kit-react';
-import ReviewSubmit from './Reviews';
+import SaveReviewSubmitDB from './Reviews';
 
 interface ReviewSubmissionProps {
   productId: string;
@@ -28,7 +28,7 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
     transport: http('https://worldchain-mainnet.g.alchemy.com/public'),
   });
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+  const { isLoading: isConfirming, isSuccess: isConfirmed, receipt } = useWaitForTransactionReceipt({
     client: client,
     appConfig: {
       app_id: process.env.NEXT_PUBLIC_APP_ID as string,
@@ -98,10 +98,10 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
       console.log('Submitting review...');
       const result = await submitReview(reviewData);
       console.log('Review submission result:', result);
-      
       setTransactionId(result.transactionId);
+      console.log('Receipt:', receipt);
 
-      const reviewResult = await ReviewSubmit({
+      const reviewResult = await SaveReviewSubmitDB({
         product_code: productId,
         name: "Anonymous",
         description: content,
@@ -109,6 +109,11 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
         transactionId: result.transactionId,
       });
       console.log('Review submission result:', reviewResult);
+
+      if (!reviewResult.success) {
+        throw new Error(reviewResult.error || 'Failed to save review');
+      }
+
     } catch (error) {
       console.error('Failed to submit review:', error);
       setError(error instanceof Error ? error.message : 'Failed to submit review');
