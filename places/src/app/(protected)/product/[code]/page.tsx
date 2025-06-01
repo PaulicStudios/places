@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import { ProductData } from '@/components/ProductCard';
 import { StarRating } from '@/components/StarRating';
 import { Page } from '@/components/PageLayout';
-import { TopBar, Typography, Chip } from '@worldcoin/mini-apps-ui-kit-react';
+import { TopBar, Typography, Chip, Button } from '@worldcoin/mini-apps-ui-kit-react';
 import { Barcode, Hashtag } from 'iconoir-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -222,6 +222,15 @@ export default function ProductPage() {
                   icon={<Hashtag />}
                 />
               </div>
+
+              {/* Add Review Button */}
+              <div className="pt-4">
+                <Link href={`/review/new/${product.code}`}>
+                  <Button variant="primary" size="lg" className="w-full">
+                    Write a Review
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -232,7 +241,7 @@ export default function ProductPage() {
           <div className="bg-white rounded-xl shadow-sm p-6">
             <div className="text-center space-y-3">
               <Typography variant="heading" level={2} className="text-xl font-bold text-gray-900">
-                Customer Reviews
+                All Reviews
               </Typography>
               {reviews && reviews.totalReviews > 0 && (
                 <div className="flex items-center justify-center gap-3">
