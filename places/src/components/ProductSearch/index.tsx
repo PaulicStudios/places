@@ -156,15 +156,14 @@ export const ProductSearch = ({ className }: { className?: string }) => {
   };
 
   return (
-    <div className={className}>
+    <div className={`${className} pt-4`}>
       {renderContent()}
-      
       <SearchField
         label="Find an item..."
         value={searchTerm}
         onChange={handleSearchChange}
+        className="w-full h-12 mt-4"
       />
-      
       {renderResults()}
     </div>
   );

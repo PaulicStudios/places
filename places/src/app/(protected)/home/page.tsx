@@ -19,7 +19,7 @@ export default async function Home() {
           <ProductSearch className="w-full" />
         </div>
         <div className="w-full max-w-md">
-          <BarcodeScanner className="w-full" />
+          <BarcodeScanner className="overflow-hidden" />
         </div>
       </Page.Main>
     </>

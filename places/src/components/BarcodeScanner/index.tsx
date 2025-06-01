@@ -8,8 +8,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 interface BarcodeScannerProps {
   onScanResult?: (result: string) => void;
   onClose?: () => void;
-  autoStart?: boolean; // Auto-start scanning immediately
-  continuousScanning?: boolean; // Continue scanning after finding results
+  autoStart?: boolean;
+  continuousScanning?: boolean;
   className?: string;
 }
 
@@ -21,248 +21,223 @@ export const BarcodeScanner = ({
   className
 }: BarcodeScannerProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [isScanning, setIsScanning] = useState(autoStart); // Initial state based on autoStart
+  const [isScanning, setIsScanning] = useState(false); // Don't auto-start immediately
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [scanResult, setScanResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const codeReaderRef = useRef<BrowserMultiFormatReader | null>(null);
 
-  // Effect for codeReader initialization, main cleanup, and auto-start
+  // Initialize code reader once
   useEffect(() => {
-    if (!codeReaderRef.current) {
-      codeReaderRef.current = new BrowserMultiFormatReader();
-    }
-    const currentReader = codeReaderRef.current; // For cleanup closure
-
-    if (autoStart && !isScanning) { // If autoStart is true and not already scanning
-      setError(null);
-      setScanResult(null);
-      // setHasPermission(null); // Let permission be checked naturally by startScanning
-      setIsScanning(true); // Trigger the scanning effect
-    }
-
+    codeReaderRef.current = new BrowserMultiFormatReader();
+    
     return () => {
-      currentReader?.reset();
-      const video = videoRef.current;
-      if (video && video.srcObject) {
-        const stream = video.srcObject as MediaStream;
-        stream.getTracks().forEach(track => track.stop());
-        video.srcObject = null;
-      }
+      stopStreamAndReset();
     };
-  }, [autoStart, isScanning]); // isScanning in deps for the autoStart conditional logic
-
-  // Effect for video element specific event listeners
+  }, []);
+  
+  // Handle autoStart
   useEffect(() => {
-    const currentVideoElement = videoRef.current;
-    if (!currentVideoElement) return;
+    if (autoStart && !isScanning && !scanResult) {
+      handleStartButtonClick();
+    }
+  }, [autoStart]);
 
-    const handleVideoEnded = () => {
-      console.log('Video stream ended');
-      setIsScanning(false);
-      setError(null); 
-    };
-
-    const handleVideoError = (event: Event) => {
-      console.log('Video error occurred:', event);
-      if (isScanning) { // Only set error if we were actively trying to scan
-        setError('Camera connection lost. Please try again.');
-      }
-      setIsScanning(false);
-    };
-
-    currentVideoElement.addEventListener('ended', handleVideoEnded);
-    currentVideoElement.addEventListener('error', handleVideoError);
-
-    return () => {
-      currentVideoElement.removeEventListener('ended', handleVideoEnded);
-      currentVideoElement.removeEventListener('error', handleVideoError);
-    };
-  }, [isScanning]); // Depends on isScanning for the conditional error logic
+  // Clean up function to stop streams and reset reader
+  const stopStreamAndReset = useCallback(() => {
+    if (codeReaderRef.current) {
+      codeReaderRef.current.reset();
+    }
+    
+    if (videoRef.current && videoRef.current.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream;
+      stream.getTracks().forEach(track => track.stop());
+      videoRef.current.srcObject = null;
+    }
+  }, []);
 
   const requestCameraPermission = useCallback(async () => {
-    // ... (requestCameraPermission implementation remains largely the same)
-    // Ensure it sets hasPermission state correctly and returns a boolean
     try {
       setError(null);
       let stream;
+      
+      // Try to get the back camera first
       try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: 'environment' } } });
+        stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { facingMode: { exact: 'environment' } }
+        });
       } catch {
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        // Fall back to any available camera
+        stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { facingMode: 'environment' } 
+        });
       }
-      stream.getTracks().forEach(track => track.stop()); 
+      
+      // Just checking we can access it, stop it immediately
+      stream.getTracks().forEach(track => track.stop());
       setHasPermission(true);
+      console.log("Camera permission granted");
       return true;
     } catch (err) {
       console.error('Camera permission error:', err);
       setHasPermission(false);
+      
       if (err instanceof DOMException) {
         switch (err.name) {
-          case 'NotAllowedError': setError('Camera permission denied. Please enable camera access in your browser settings.'); break;
-          case 'NotFoundError': setError('No camera found on this device.'); break;
-          case 'NotSupportedError': setError('Camera access is not supported in this browser.'); break;
-          default: setError('Failed to access camera. Please check your permissions.');
+          case 'NotAllowedError': 
+            setError('Camera permission denied. Please enable camera access in your browser settings.');
+            break;
+          case 'NotFoundError': 
+            setError('No camera found on this device.');
+            break;
+          case 'NotSupportedError': 
+            setError('Camera access is not supported in this browser.');
+            break;
+          default: 
+            setError('Failed to access camera. Please check your permissions.');
         }
       } else {
         setError('Failed to request camera permission');
       }
       return false;
     }
-  }, []); // No dependencies, so it's stable
+  }, []);
 
   const startScanning = useCallback(async () => {
     if (!codeReaderRef.current || !videoRef.current) {
       console.warn("startScanning: codeReader or videoRef not ready.");
-      setIsScanning(false); // Ensure we exit scanning state if prerequisites are not met
+      setIsScanning(false);
       return;
     }
-    const reader = codeReaderRef.current;
-
-    // Permission check is now more critical here as this is the main scanning function
+    
+    // Clear previous state
+    setError(null);
+    stopStreamAndReset();
+    
+    // Check permissions if needed
     if (hasPermission === null) {
       const permissionGranted = await requestCameraPermission();
       if (!permissionGranted) {
         setIsScanning(false);
-        return; // Stop if permission was not granted
+        return;
       }
-      // After permission request, hasPermission state will update,
-      // the main scanning useEffect will re-evaluate.
-      // To avoid re-triggering, we can check hasPermission again.
-      // However, the effect structure should handle this. For now, let's proceed.
     } else if (hasPermission === false) {
       setError('Camera permission is required to scan.');
       setIsScanning(false);
       return;
     }
-    
-    // Clear previous errors when starting a scan attempt
-    setError(null);
 
     try {
-      const videoInputDevices = await reader.listVideoInputDevices();
-      if (videoInputDevices.length === 0) throw new Error('No camera devices found');
+      const reader = codeReaderRef.current;
+      console.log("Starting barcode scanning...");
       
+      const videoInputDevices = await reader.listVideoInputDevices();
+      console.log("Available cameras:", videoInputDevices.length);
+      
+      if (videoInputDevices.length === 0) {
+        throw new Error('No camera devices found');
+      }
+      
+      // Try to use back camera if available
       let selectedDeviceId = videoInputDevices[0].deviceId;
       const backCamera = videoInputDevices.find(device => {
         const label = device.label.toLowerCase();
         return label.includes('back') || label.includes('environment') || label.includes('rear');
       });
-      if (backCamera) selectedDeviceId = backCamera.deviceId;
-
-      const result = await reader.decodeOnceFromVideoDevice(selectedDeviceId, videoRef.current);
       
-      if (result) {
-        // Stop camera resources immediately
-        if (videoRef.current && videoRef.current.srcObject) {
-          const stream = videoRef.current.srcObject as MediaStream;
-          stream.getTracks().forEach(track => track.stop());
-          videoRef.current.srcObject = null;
-        }
-        // reader.reset(); // Resetting here might be too soon if continuous scanning reuses it.
+      if (backCamera) {
+        console.log("Using back camera");
+        selectedDeviceId = backCamera.deviceId;
+      }
 
-        setScanResult(result.getText());
-        onScanResult?.(result.getText());
-        
-        if (continuousScanning) {
-          setTimeout(() => {
-            setScanResult(null); 
-            if (isScanning) { // Check if still in scanning mode
-              startScanning(); // Re-initiate scan for continuous mode
-            } else {
-              reader.reset(); // If scanning was stopped during timeout
+      reader.timeBetweenDecodingAttempts = 200;
+      
+      // Set up continuous scanning with custom handler
+      if (continuousScanning) {
+        reader.decodeFromVideoDevice(
+          selectedDeviceId, 
+          videoRef.current, 
+          (result, error) => {
+            if (result) {
+              console.log("Barcode detected:", result.getText());
+              setScanResult(result.getText());
+              onScanResult?.(result.getText());
+              stopStreamAndReset();
+              setIsScanning(false);
             }
-          }, 1500);
-        } else {
-          setIsScanning(false); // Stop scanning if not continuous
-          reader.reset();
+            
+            if (error && !(error instanceof NotFoundException)) {
+              console.error("Scanning error:", error);
+              if (error.message.includes('permission')) {
+                setError('Camera permission issue. Please refresh and try again.');
+              } else {
+                setError('Scanner error: ' + error.message);
+              }
+              stopStreamAndReset();
+              setIsScanning(false);
+            }
+          }
+        );
+      } else {
+        // Single scan mode
+        try {
+          const result = await reader.decodeOnceFromVideoDevice(selectedDeviceId, videoRef.current);
+          if (result) {
+            console.log("Barcode detected:", result.getText());
+            setScanResult(result.getText());
+            onScanResult?.(result.getText());
+          }
+        } catch (err) {
+          if (err instanceof NotFoundException) {
+            setError('No barcode found. Please try again.');
+          } else {
+            throw err; // Re-throw for the outer catch
+          }
+        } finally {
+          stopStreamAndReset();
+          setIsScanning(false);
         }
       }
     } catch (err) {
-      console.error('Scanning error:', err);
-      if (err instanceof NotFoundException) {
-        console.log('No barcode detected, continuing scan if continuous...');
-        if (isScanning && continuousScanning) { // If continuous, try again
-            setTimeout(() => startScanning(), 100); // Brief delay before retrying
-        } else if (!continuousScanning) {
-            setError('No barcode found.');
-            setIsScanning(false);
-            reader.reset();
-        }
-        // If not continuous and no barcode, it will fall through to generic error handling if not caught
-      } else if (err instanceof Error) {
-        const errorMessage = err.message.toLowerCase();
-        if (errorMessage.includes('video stream has ended') || errorMessage.includes('stream ended')) {
-          console.log('Video stream ended, stopping scan silently');
-        } else if (errorMessage.includes('permission') || errorMessage.includes('denied')) {
-          setError('Camera permission denied. Please enable camera access.');
-        } else if (errorMessage.includes('no camera') || errorMessage.includes('not found')) {
-          setError('No camera found on this device.');
-        } else {
-          setError('Unable to access camera. Please try again.');
-        }
-      } else {
-        console.log('Unknown scanning error, stopping silently');
-      }
-      if (!(err instanceof NotFoundException && continuousScanning && isScanning)) {
-        setIsScanning(false); // Stop scanning on other errors or if not continuing
-        reader.reset();
-      }
+      console.error("Scanner setup error:", err);
+      setError(err instanceof Error ? err.message : 'Failed to start scanner');
+      stopStreamAndReset();
+      setIsScanning(false);
     }
-  }, [hasPermission, onScanResult, continuousScanning, requestCameraPermission, isScanning]); // isScanning for continuous logic
+  }, [hasPermission, onScanResult, continuousScanning, requestCameraPermission, stopStreamAndReset]);
 
-  // Effect to START or STOP scanning based on isScanning state
   useEffect(() => {
-    if (isScanning && codeReaderRef.current && !scanResult) { // Only start if not already showing a result
+    if (isScanning && !scanResult) {
       startScanning();
-    } else if (!isScanning && codeReaderRef.current) {
-      // Cleanup when isScanning becomes false explicitly (e.g., by stopScanning button or error)
-      codeReaderRef.current.reset();
-      if (videoRef.current && videoRef.current.srcObject) {
-        const stream = videoRef.current.srcObject as MediaStream;
-        stream.getTracks().forEach(track => track.stop());
-        videoRef.current.srcObject = null;
-      }
     }
-  }, [isScanning, startScanning, scanResult]); // scanResult to re-trigger if cleared for continuous scan
-
+  }, [isScanning, scanResult, startScanning]);
 
   const handleStartButtonClick = () => {
     setError(null);
     setScanResult(null);
-    setHasPermission(null); // Reset permission to allow re-check by startScanning
-    setIsScanning(true); // This will trigger the useEffect above
+    setIsScanning(true);
   };
 
   const stopScanning = () => {
-    // User explicitly stops scanning
-    setIsScanning(false); // This will trigger cleanup in the useEffect above
-    // codeReaderRef.current?.reset(); // Redundant due to effect
-    // stream stop redundant due to effect
-    setError(null); // Clear any errors
+    stopStreamAndReset();
+    setIsScanning(false);
+    setError(null);
     if (onClose) {
       onClose();
     }
   };
 
   const retryScanning = () => {
-    setScanResult(null); // Clear previous result
-    setError(null);       // Clear previous error
-    // setHasPermission(null); // Optionally reset permission
-    if (!isScanning) {    // If not already scanning (e.g., after an error or non-continuous scan)
-      setIsScanning(true); // Re-initiate scanning
-    } else {
-      // If already scanning (e.g. continuous scan failed with NotFound), startScanning might be called again by itself
-      // or we can force it if needed, but current continuous logic should handle retries on NotFound.
-      // For a manual "scan another" button after a successful scan, this will set isScanning true.
-    }
+    setScanResult(null);
+    setError(null);
+    setIsScanning(true);
   };
 
   return (
-    <div className={`relative w-full max-w-md mx-auto p-4 bg-gray-900 rounded-lg shadow-xl ${className}`}>
+    <div className={`relative w-full max-w-md mx-auto p-4 bg-gray-900 rounded-lg shadow-xl overflow-hidden ${className}`}>
       {/* Camera View or Placeholder */}
       {isScanning && (
-        <div className="relative w-full max-w-md aspect-square bg-gray-100 rounded-lg overflow-hidden">
+        <div className="relative w-full aspect-square bg-gray-100 rounded-lg overflow-hidden">
           <video
             ref={videoRef}
             className="w-full h-full object-cover"
@@ -283,23 +258,18 @@ export const BarcodeScanner = ({
       )}
 
       {/* Controls: Button, Result, Error messages */}
-      <div className="w-full max-w-md space-y-4">
+      <div className="w-full space-y-4">
         {!isScanning && !scanResult && (
-          <LiveFeedback
-            state={hasPermission === false ? 'failed' : undefined}
-            className="w-full"
+          <Button
+            variant="primary"
+            onClick={handleStartButtonClick}
+            className="w-full flex items-center justify-center h-6 rounded-full"
+            style={{ borderRadius: '9999px' }}
+            disabled={hasPermission === false}
           >
-            <Button
-              onClick={handleStartButtonClick} // Changed to handleStartButtonClick
-              disabled={hasPermission === false}
-              variant="primary"
-              size="lg"
-              className="w-full flex items-center gap-2"
-            >
-              <Camera className="w-5 h-5" />
-              Start Scanning
-            </Button>
-          </LiveFeedback>
+            <Camera className="mr-2 w-5 h-5" />
+            {hasPermission === false ? 'Permission Denied' : 'Scan Barcode'}
+          </Button>
         )}
 
         {scanResult && (
