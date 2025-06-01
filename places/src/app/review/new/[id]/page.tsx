@@ -5,10 +5,12 @@ import { Page } from '@/components/PageLayout';
 import { ReviewSubmission } from '@/components/ReviewSubmission';
 import { TopBar } from '@worldcoin/mini-apps-ui-kit-react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
 export default function NewReviewPage() {
   const params = useParams();
   const productId = params.id as string;
+  const { data: session } = useSession();
 
   return (
      <Page>
@@ -25,7 +27,10 @@ export default function NewReviewPage() {
           </Page.Header>
           
           <Page.Main className="space-y-6 pb-20">
-            <ReviewSubmission productId={productId} />
+            <ReviewSubmission 
+              productId={productId} 
+              username={session?.user?.username || 'Anonymous'} 
+            />
         </Page.Main>
     </Page>
   );
