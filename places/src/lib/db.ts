@@ -160,9 +160,9 @@ export function findAllReviews(id: string) {
 export function MockDataReviews() {
   const database = db();
 
-  // Correct the SQL statement to include created_at
+  // Correct the SQL statement to include all required fields
   const stmt = database.prepare(`
-    INSERT OR REPLACE INTO reviews (product_code, description, stars, created_at)
+    INSERT OR REPLACE INTO reviews (product_code, description, stars, transactional_id, created_at)
     VALUES (?, ?, ?, ?, ?)
     `);
   
@@ -171,54 +171,63 @@ export function MockDataReviews() {
       product_code: '5449000000996',
       description: 'Hi im a sugar addict! Love it.',
       stars: 5,
+      transactional_id: 'mock_tx_001',
       created_at: new Date().toISOString()
     },
     {
       product_code: '5449000000996',
       description: 'Im gay.',
       stars: 1,
+      transactional_id: 'mock_tx_002',
       created_at: new Date().toISOString()
     },
     {
       product_code: '5449000000996',
       description: 'Random Bullshit kawungabunga.',
       stars: 3,
+      transactional_id: 'mock_tx_003',
       created_at: new Date().toISOString()
     },
     {
       product_code: '5000112654042',
       description: 'Sprite > Cola',
       stars: 4,
+      transactional_id: 'mock_tx_004',
       created_at: new Date().toISOString()
     },
     {
       product_code: '5000112654042',
       description: 'Shut up Meg!!!111!!!!',
       stars: 1,
+      transactional_id: 'mock_tx_005',
       created_at: new Date().toISOString()
     },
     {
       product_code: '5000112654042',
       description: 'Im a nigerian prince donate me eth to 0x000000000 so that I can send you 10k',
       stars: 5,
+      transactional_id: 'mock_tx_006',
       created_at: new Date().toISOString()
     },
     {
       product_code: '5000112654035',
       description: 'Ja ist halte ne Fanta ne...',
       stars: 3,
+      transactional_id: 'mock_tx_007',
       created_at: new Date().toISOString()
     },
     {
       product_code: '5000112654035',
       description: 'Ich mag auch keine Fanta',
       stars: 3,
+      transactional_id: 'mock_tx_008',
       created_at: new Date().toISOString()
     },
     {
       product_code: '5000112654035',
       description: 'Ich bin nich mainstream deswegen fanta!',
       stars: 4,
+      transactional_id: 'mock_tx_009',
       created_at: new Date().toISOString()
     },
   ];
@@ -228,6 +237,7 @@ export function MockDataReviews() {
       review.product_code,
       review.description,
       review.stars,
+      review.transactional_id,
       review.created_at
     );
   }

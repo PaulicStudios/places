@@ -33,3 +33,18 @@ body {
 	overscroll-behavior: none;
 	overflow: scroll;
 }
+
+/* Ensure fixed header stays in place on mobile keyboard */
+.fixed-header {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 50 !important;
+}
+
+/* Prevent page from jumping when keyboard opens */
+* {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}

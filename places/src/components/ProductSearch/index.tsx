@@ -9,7 +9,7 @@ interface SearchError {
   message: string;
 }
 
-export const ProductSearch = () => {
+export const ProductSearch = ({ className }: { className?: string }) => {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -116,23 +116,6 @@ export const ProductSearch = () => {
       );
     }
 
-    if (results.length > 0) {
-      return (
-        <div className="space-y-4">
-          <Typography className="text-gray-600">
-            Found {results.length} product{results.length !== 1 ? 's' : ''} for &ldquo;{searchTerm}&rdquo;
-          </Typography>
-          <ProductCardGrid
-            products={results}
-            interactive={false}
-            onProductClick={handleProductClick}
-            showRating={false}
-            className="mt-4"
-          />
-        </div>
-      );
-    }
-
     if (!hasSearched) {
       return (
         <div className="text-center py-8">
@@ -152,15 +135,37 @@ export const ProductSearch = () => {
     return null;
   };
 
+  const renderResults = (): ReactNode => {
+    if (results.length > 0) {
+      return (
+        <div className="space-y-4">
+          <Typography className="text-gray-600">
+            Found {results.length} product{results.length !== 1 ? 's' : ''} for &ldquo;{searchTerm}&rdquo;
+          </Typography>
+          <ProductCardGrid
+            products={results}
+            interactive={false}
+            onProductClick={handleProductClick}
+            showRating={false}
+            className="mt-4"
+          />
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
-    <div className="w-full space-y-6">
+    <div className={className}>
+      {renderContent()}
+      
       <SearchField
-        label="Search items..."
+        label="Find an item..."
         value={searchTerm}
         onChange={handleSearchChange}
       />
       
-      {renderContent()}
+      {renderResults()}
     </div>
   );
 }

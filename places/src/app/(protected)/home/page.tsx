@@ -1,29 +1,26 @@
 import { auth } from '@/auth';
 import { Page } from '@/components/PageLayout';
-import { Marble, TopBar, Typography } from '@worldcoin/mini-apps-ui-kit-react';
+import { TopBar } from '@worldcoin/mini-apps-ui-kit-react';
 import { ProductSearch } from '@/components/ProductSearch';
+import { BarcodeScanner } from '@/components/BarcodeScanner';
 
 export default async function Home() {
   const session = await auth();
 
   return (
     <>
-      <Page.Header className="p-0 pb-2">
+      <Page.Header className="p-0">
         <TopBar
-          className='text-gray-900 gradient-bg'
           title="Reviews"
-          endAdornment={
-            <div className="flex items-center gap-2">
-              <Typography className="font-semibold">
-                {session?.user.username}
-              </Typography>
-              <Marble src={session?.user.profilePictureUrl} className="w-12" />
-            </div>
-          }
         />
       </Page.Header>
-      <Page.Main className="flex flex-col items-center justify-start gap-4 mb-16">
-        <ProductSearch />
+      <Page.Main className="flex flex-col justify-center items-center p-4">
+        <div className="w-full max-w-md mb-6">
+          <ProductSearch className="w-full" />
+        </div>
+        <div className="w-full max-w-md">
+          <BarcodeScanner className="w-full" />
+        </div>
       </Page.Main>
     </>
   );
