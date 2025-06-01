@@ -43,13 +43,13 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
     let pollInterval: NodeJS.Timeout;
 
     const pollTransaction = async () => {
-      if (!transactionId || isPolling) return;
+      if (!transactionId) return;
 
       setIsPolling(true);
       let attempts = 0;
       const maxAttempts = 30; // 5 minutes with 10-second intervals
 
-      pollInterval = setInterval(async () => {
+      const checkStatus = async () => {
         attempts++;
         console.log(`Polling attempt ${attempts} for transaction ${transactionId}`);
 
@@ -66,10 +66,16 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
           clearInterval(pollInterval);
           setError('Transaction status check timed out');
         }
-      }, 10000); // Poll every 10 seconds
+      };
+
+      // Initial check
+      await checkStatus();
+      
+      // Set up interval for subsequent checks
+      pollInterval = setInterval(checkStatus, 10000); // Poll every 10 seconds
     };
 
-    if (transactionId) {
+    if (transactionId && !isPolling) {
       pollTransaction();
     }
 
@@ -78,7 +84,7 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
         clearInterval(pollInterval);
       }
     };
-  }, [transactionId]);
+  }, [transactionId, isPolling]);
 
   const handleReviewSubmission = async () => {
     if (!content.trim()) {
