@@ -1,7 +1,7 @@
 'use client';
 
 import { TabItem, Tabs } from '@worldcoin/mini-apps-ui-kit-react';
-import { Home, ScanBarcode } from 'iconoir-react';
+import { Home, ScanBarcode, Reports } from 'iconoir-react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -16,6 +16,8 @@ export const Navigation = () => {
       setValue('home');
     } else if (pathname === '/scanner' || pathname === '/home/scanner') {
       setValue('scanner');
+    } else if (pathname === '/explore') {
+      setValue('explore');
     } else if (pathname.includes('reviews')) {
       setValue('reviews');
     }
@@ -34,6 +36,9 @@ export const Navigation = () => {
       case 'scanner':
         router.push('/home/scanner'); // Use the protected route
         break;
+      case 'explore':
+        router.push('/explore');
+        break;
       case 'reviews':
         console.log('Reviews page not implemented yet');
         break;
@@ -44,6 +49,7 @@ export const Navigation = () => {
     <Tabs value={value} onValueChange={handleTabChange} className='mt-2'>
       <TabItem value="home" icon={<Home />} label="Home" />
       <TabItem value="scanner" icon={<ScanBarcode />} label="Scanner" />
+      <TabItem value="explore" icon={<Reports />} label="Explore" />
       {/* <TabItem value="reviews" icon={<List />} label="Your Reviews" /> */}
     </Tabs>
   );
