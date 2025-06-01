@@ -1,5 +1,7 @@
 # Reviews MiniApp
 
+If you have the World App you can try our Mini App here: 🌟 [REVIEWS](https://worldcoin.org/mini-app?app_id=app_e7ffd3a5eb7e7210ce59a79666b17a7b&draft_id=meta_64ac112b8fb3f8805e415f5e735fa146) 🌟
+
 **World ID powered review app for authentic human written reviews and ratings**
 
 Review is a review and discovery platform built as a Worldcoin Mini App that leverages World ID authentication to create a trusted review ecosystem. Users can search for products by name or scan barcodes (supporting ISBN, UPC, and EAN formats) to instantly access product information and read or write verified reviews.
