@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { findAllReviews, saveReview } from '@/lib/db';
-import { auth } from '@/auth';
+import { findAllReviews } from '@/lib/db';
 
 interface Review {
   review_id: number;
