@@ -1,6 +1,6 @@
 # Reviews MiniApp
 
-If you have the World App you can try our Mini App here: 🌟 [REVIEWS](https://worldcoin.org/mini-app?app_id=app_e7ffd3a5eb7e7210ce59a79666b17a7b&draft_id=meta_64ac112b8fb3f8805e415f5e735fa146) 🌟
+If you have the World App you can try our Mini App here: 🌟 [REVIEWS](https://worldcoin.org/mini-app?app_id=app_23fd4240c950374e1cd8460e2593bd08&draft_id=meta_b6fbc66731112d4e9d9bbeaaa68ab71e&app_mode=mini-app) 🌟
 
 **World ID powered review app for authentic human written reviews and ratings**
 
