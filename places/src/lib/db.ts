@@ -25,9 +25,9 @@ export function db(): Database.Database {
       CREATE TABLE IF NOT EXISTS reviews(
         review_id INTEGER PRIMARY KEY AUTOINCREMENT,
         product_code TEXT NOT NULL,
-        name TEXT NOT NULL,
         description TEXT NOT NULL,
         stars INTEGER NOT NULL CHECK(stars BETWEEN 1 AND 5),
+        transactional_id TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
@@ -109,15 +109,15 @@ export function saveReview(review: ReviewSubmissionDB) {
   const database = db();
   
   const stmt = database.prepare(`
-    INSERT INTO reviews (product_code, name, description, stars)
+    INSERT INTO reviews (product_code, description, stars, transactional_id)
     VALUES (?, ?, ?, ?)
   `);
   
   return stmt.run(
     review.product_code,
-    "",
     review.description,
-    review.stars
+    review.stars,
+    review.transactionId
   );
 }
 
