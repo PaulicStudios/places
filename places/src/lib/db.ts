@@ -164,14 +164,14 @@ export function findAllReviews(id: string) {
 export function MockDataReviews() {
   const database = db();
 
+  // Correct the SQL statement to include created_at
   const stmt = database.prepare(`
-    INSERT OR REPLACE INTO reviews (product_code, name, description, stars)
-    VALUES (?, ?, ?, ?)
-    `)
+    INSERT OR REPLACE INTO reviews (product_code, name, description, stars, created_at)
+    VALUES (?, ?, ?, ?, ?)
+    `);
   
   const reviews = [
     {
-      review_id: 1,
       product_code: '5449000000996',
       name: 'Coca-Cola Classic',
       description: 'Hi im a sugar addict! Love it.',
@@ -179,7 +179,6 @@ export function MockDataReviews() {
       created_at: new Date().toISOString()
     },
     {
-      review_id: 2,
       product_code: '5449000000996',
       name: 'Coca-Cola Classic',
       description: 'Im gay.',
@@ -187,7 +186,6 @@ export function MockDataReviews() {
       created_at: new Date().toISOString()
     },
     {
-      review_id: 3,
       product_code: '5449000000996',
       name: 'Coca-Cola Classic',
       description: 'Random Bullshit kawungabunga.',
@@ -195,7 +193,6 @@ export function MockDataReviews() {
       created_at: new Date().toISOString()
     },
     {
-      review_id: 4,
       product_code: '5000112654042',
       name: 'Sprite',
       description: 'Sprite > Cola',
@@ -203,7 +200,6 @@ export function MockDataReviews() {
       created_at: new Date().toISOString()
     },
     {
-      review_id: 5,
       product_code: '5000112654042',
       name: 'Sprite',
       description: 'Shut up Meg!!!111!!!!',
@@ -211,14 +207,13 @@ export function MockDataReviews() {
       created_at: new Date().toISOString()
     },
     {
-      review_id: 6,
       product_code: '5000112654042',
       name: 'Sprite',
       description: 'Im a nigerian prince donate me eth to 0x000000000 so that I can send you 10k',
       stars: 5,
       created_at: new Date().toISOString()
-    },    {
-      review_id: 7,
+    },
+    {
       product_code: '5000112654035',
       name: 'Fanta Orange',
       description: 'Ja ist halte ne Fanta ne...',
@@ -226,7 +221,6 @@ export function MockDataReviews() {
       created_at: new Date().toISOString()
     },
     {
-      review_id: 8,
       product_code: '5000112654035',
       name: 'Fanta Orange',
       description: 'Ich mag auch keine Fanta',
@@ -234,15 +228,23 @@ export function MockDataReviews() {
       created_at: new Date().toISOString()
     },
     {
-      review_id: 6,
       product_code: '5000112654035',
       name: 'Fanta Orange',
       description: 'Ich bin nich mainstream deswegen fanta!',
       stars: 4,
       created_at: new Date().toISOString()
     },
+  ];
 
-  ]
+  for (const review of reviews) {
+    stmt.run(
+      review.product_code,
+      review.name,
+      review.description,
+      review.stars,
+      review.created_at
+    );
+  }
 }
 
 export function MockDataProducts() {
