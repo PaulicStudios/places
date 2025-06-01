@@ -157,6 +157,87 @@ export function findAllReviews(id: string) {
   `).all(id);
 }
 
+// New functions for explore stats
+export function getMostReviewedProducts(limit: number = 10) {
+  const database = db();
+  
+  return database.prepare(`
+    SELECT 
+      p.*,
+      COUNT(r.review_id) as review_count,
+      AVG(r.stars) as average_rating
+    FROM products p
+    LEFT JOIN reviews r ON p.code = r.product_code
+    GROUP BY p.code
+    HAVING COUNT(r.review_id) > 0
+    ORDER BY review_count DESC, average_rating DESC
+    LIMIT ?
+  `).all(limit);
+}
+
+export function getTrendingProducts(limit: number = 10) {
+  const database = db();
+  
+  // Products with highest average ratings and at least 2 reviews
+  return database.prepare(`
+    SELECT 
+      p.*,
+      COUNT(r.review_id) as review_count,
+      AVG(r.stars) as average_rating
+    FROM products p
+    LEFT JOIN reviews r ON p.code = r.product_code
+    GROUP BY p.code
+    HAVING COUNT(r.review_id) >= 2
+    ORDER BY average_rating DESC, review_count DESC
+    LIMIT ?
+  `).all(limit);
+}
+
+export function getTotalStats() {
+  const database = db();
+  
+  const productCount = database.prepare(`SELECT COUNT(*) as count FROM products`).get() as { count: number };
+  const reviewCount = database.prepare(`SELECT COUNT(*) as count FROM reviews`).get() as { count: number };
+  
+  return {
+    totalProducts: productCount.count,
+    totalReviews: reviewCount.count
+  };
+}
+
+export function getRecentReviews(limit: number = 10) {
+  const database = db();
+  
+  return database.prepare(`
+    SELECT 
+      r.*,
+      p.name as product_name,
+      p.image_url as product_image
+    FROM reviews r
+    LEFT JOIN products p ON r.product_code = p.code
+    ORDER BY r.created_at DESC
+    LIMIT ?
+  `).all(limit);
+}
+
+export function getTopReviewers(limit: number = 10) {
+  const database = db();
+  
+  // For this demo, we'll group by transactional_id as a proxy for user
+  // In a real app, you'd have a users table
+  return database.prepare(`
+    SELECT 
+      transactional_id as user_id,
+      COUNT(*) as review_count,
+      AVG(stars) as average_rating,
+      MAX(created_at) as last_review_date
+    FROM reviews
+    GROUP BY transactional_id
+    ORDER BY review_count DESC, average_rating DESC
+    LIMIT ?
+  `).all(limit);
+}
+
 export function MockDataReviews() {
   const database = db();
 
