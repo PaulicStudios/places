@@ -261,20 +261,12 @@ export default function ProductPage() {
 
           {/* Reviews List */}
           {reviews && reviews.reviews.length > 0 ? (
-            <div className="space-y-4">
-              {reviews.reviews.map((review, index) => (
-                <div key={review.review_id} className="bg-white rounded-xl shadow-sm p-6">
-                  <div className="flex items-start justify-between mb-4">
+            <div>
+              {reviews.reviews.map((review) => (
+                <div key={review.review_id} className="bg-white rounded-xl shadow-sm p-2">
+                  <div className="flex flex-col items-start justify-between gap-2">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
-                        <Typography className="text-white font-semibold text-sm">
-                          {review.transactional_id ? review.transactional_id.charAt(0).toUpperCase() : 'U'}
-                        </Typography>
-                      </div>
                       <div>
-                        <Typography className="font-semibold text-gray-900">
-                          User {review.review_id}
-                        </Typography>
                         {review.created_at && (
                           <Typography className="text-gray-500 text-sm">
                             {new Date(review.created_at).toLocaleDateString('en-US', {
@@ -292,20 +284,25 @@ export default function ProductPage() {
                         {review.stars}/5
                       </Typography>
                     </div>
-                  </div>
                   
                   <Typography className="text-gray-700 leading-relaxed">
                     {review.description}
                   </Typography>
-                  
-                  {index === 0 && reviews.reviews.length > 1 && (
-                    <div className="flex items-center gap-2 text-gray-600 text-sm font-medium mt-3 pt-3 border-t border-gray-100">
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  {review.transactional_id && (
+                    <a
+                    href={`https://worldchain-mainnet.explorer.alchemy.com/tx/${review.transactional_id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full inline-flex justify-center items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                       </svg>
-                      Most Recent Review
-                    </div>
+                      View Transaction on Explorer
+                    </a>
                   )}
+                  </div>
+                  <hr className="my-4 border-gray-200" />
                 </div>
               ))}
             </div>

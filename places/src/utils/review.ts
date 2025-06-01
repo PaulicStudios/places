@@ -64,10 +64,13 @@ export async function submitReview(reviewData: ReviewSubmission) {
       console.log('Transaction final payload:', finalPayload);
 
       if (finalPayload.status === 'error') {
-        const errorDetails = finalPayload.details ? JSON.stringify(finalPayload.details) : 'No details provided';
-        console.error('Transaction error details:', errorDetails);
-        
-        throw new Error(`Transaction failed: ${finalPayload.error_code} - ${errorDetails}`);
+        console.error('Transaction error details:', finalPayload.details);
+
+        if (finalPayload.error_code === 'simulation_failed') {
+          throw new Error('You have already submitted a review for this product');
+        }
+
+        throw new Error(`Transaction failed: ${finalPayload.error_code} - ${finalPayload.details}`);
       }
 
       if (!finalPayload.transaction_id) {
