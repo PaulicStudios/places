@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Page } from '@/components/PageLayout';
-import { ProductCardGrid, ProductData } from '@/components/ProductCard';
+import { ProductData, ProductCard } from '@/components/ProductCard';
 import { StarRating } from '@/components/StarRating';
 import { Typography, TopBar } from '@worldcoin/mini-apps-ui-kit-react';
 import { Reports, Star, Clock, FireFlame } from 'iconoir-react';
@@ -174,15 +174,20 @@ export default function ExplorePage() {
                 Most Reviewed Products
               </Typography>
             </div>
-            <ProductCardGrid
-              products={data.mostReviewed.map(product => ({
-                ...product,
-                id: product.code
-              }))}
-              onProductClick={handleProductClick}
-              showRating={false}
-              className="grid-cols-1 sm:grid-cols-2"
-            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {data.mostReviewed.map((product) => (
+                <ProductCard
+                  key={product.code}
+                  product={product}
+                  rating={product.average_rating}
+                  reviewCount={product.review_count}
+                  onProductClick={handleProductClick}
+                  showRating={true}
+                  showReviewCount={true}
+                  className="h-full"
+                />
+              ))}
+            </div>
           </div>
         )}
 
@@ -198,15 +203,20 @@ export default function ExplorePage() {
                 (Highest Average Ratings)
               </Typography>
             </div>
-            <ProductCardGrid
-              products={data.trending.map(product => ({
-                ...product,
-                id: product.code
-              }))}
-              onProductClick={handleProductClick}
-              showRating={false}
-              className="grid-cols-1 sm:grid-cols-2"
-            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {data.trending.map((product) => (
+                <ProductCard
+                  key={product.code}
+                  product={product}
+                  rating={product.average_rating}
+                  reviewCount={product.review_count}
+                  onProductClick={handleProductClick}
+                  showRating={true}
+                  showReviewCount={true}
+                  className="h-full"
+                />
+              ))}
+            </div>
           </div>
         )}
 
@@ -221,7 +231,11 @@ export default function ExplorePage() {
             </div>
             <div className="space-y-4">
               {data.recentReviews.map((review) => (
-                <div key={review.review_id} className="border border-gray-200 rounded-lg p-4">
+                <div 
+                  key={review.review_id} 
+                  onClick={() => router.push(`/product/${review.product_code}`)}
+                  className="border border-gray-200 rounded-lg p-4 cursor-pointer hover:shadow-md transition-shadow duration-200"
+                >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
                       <Typography variant="heading" level={4} className="font-semibold mb-1">

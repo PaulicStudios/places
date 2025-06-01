@@ -27,6 +27,8 @@ interface ProductCardProps {
   onProductClick?: (product: ProductData) => void;
   className?: string;
   showRating?: boolean;
+  reviewCount?: number;
+  showReviewCount?: boolean;
 }
 
 /**
@@ -49,6 +51,8 @@ export const ProductCard = ({
   onProductClick,
   className = '',
   showRating = true,
+  reviewCount = 0,
+  showReviewCount = false,
 }: ProductCardProps) => {
   const [currentRating, setCurrentRating] = useState(rating);
 
@@ -145,6 +149,14 @@ export const ProductCard = ({
             {currentRating > 0 && (
               <div className="text-xs text-gray-500 mt-1 text-right">
                 {currentRating.toFixed(1)} out of 5
+                {showReviewCount && reviewCount > 0 && (
+                  <span className="ml-2">• {reviewCount} review{reviewCount !== 1 ? 's' : ''}</span>
+                )}
+              </div>
+            )}
+            {showReviewCount && reviewCount > 0 && currentRating === 0 && (
+              <div className="text-xs text-gray-500 mt-1 text-right">
+                {reviewCount} review{reviewCount !== 1 ? 's' : ''}
               </div>
             )}
           </div>
