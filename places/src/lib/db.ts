@@ -30,7 +30,7 @@ export function db(): Database.Database {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    loadDumbShit();
+    MockDataProducts();
   }
 
   //always return the instance of the db
@@ -160,7 +160,91 @@ export function findAllReviews(id: string) {
   `).all(id);
 }
 
-export function loadDumbShit() {
+export function MockDataReviews() {
+  const database = db();
+
+  const stmt = database.prepare(`
+    INSERT OR REPLACE INTO reviews (product_code, name, description, stars)
+    VALUES (?, ?, ?, ?)
+    `)
+  
+  const reviews = [
+    {
+      review_id: 1,
+      product_code: '5449000000996',
+      name: 'Coca-Cola Classic',
+      description: 'Hi im a sugar addict! Love it.',
+      stars: 5,
+      created_at: new Date().toISOString()
+    },
+    {
+      review_id: 2,
+      product_code: '5449000000996',
+      name: 'Coca-Cola Classic',
+      description: 'Im gay.',
+      stars: 1,
+      created_at: new Date().toISOString()
+    },
+    {
+      review_id: 3,
+      product_code: '5449000000996',
+      name: 'Coca-Cola Classic',
+      description: 'Random Bullshit kawungabunga.',
+      stars: 3,
+      created_at: new Date().toISOString()
+    },
+    {
+      review_id: 4,
+      product_code: '5000112654042',
+      name: 'Sprite',
+      description: 'Sprite > Cola',
+      stars: 4,
+      created_at: new Date().toISOString()
+    },
+    {
+      review_id: 5,
+      product_code: '5000112654042',
+      name: 'Sprite',
+      description: 'Shut up Meg!!!111!!!!',
+      stars: 1,
+      created_at: new Date().toISOString()
+    },
+    {
+      review_id: 6,
+      product_code: '5000112654042',
+      name: 'Sprite',
+      description: 'Im a nigerian prince donate me eth to 0x000000000 so that I can send you 10k',
+      stars: 5,
+      created_at: new Date().toISOString()
+    },    {
+      review_id: 7,
+      product_code: '5000112654035',
+      name: 'Fanta Orange',
+      description: 'Ja ist halte ne Fanta ne...',
+      stars: 3,
+      created_at: new Date().toISOString()
+    },
+    {
+      review_id: 8,
+      product_code: '5000112654035',
+      name: 'Fanta Orange',
+      description: 'Ich mag auch keine Fanta',
+      stars: 3,
+      created_at: new Date().toISOString()
+    },
+    {
+      review_id: 6,
+      product_code: '5000112654035',
+      name: 'Fanta Orange',
+      description: 'Ich bin nich mainstream deswegen fanta!',
+      stars: 4,
+      created_at: new Date().toISOString()
+    },
+
+  ]
+}
+
+export function MockDataProducts() {
   const database = db();
   
   const stmt = database.prepare(`
@@ -171,75 +255,26 @@ export function loadDumbShit() {
   // Sample product data
   const products = [
     {
-      code: '5000112654042',
+      code: '5449000000996',
       codeType: 'UPC-A',
       name: 'Coca-Cola Classic',
       description: 'Original taste soft drink with sugar and sweeteners',
-      image_url: 'https://www.coca-cola.com/content/dam/onexp/de/de/home-images/brands-images/fanta/fanta-desktop-v2.png'
+      image_url: 'https://www.desertcart.in/products/18597322-coca-cola-original-12-fl-oz-cans-24-pack'
     },
     {
-      code: '5449000000996',
+      code: '5000112654042',
       codeType: 'UPC-A',
       name: 'Sprite',
       description: 'Lemon and lime flavoured soft drink with sugar and sweetener',
       image_url: 'https://www.coca-cola.com/content/dam/onexp/de/de/home-images/brands-images/fanta/fanta-desktop-v2.png'
     },
     {
-      code: '5000112637236',
+      code: '5000112654035',
       codeType: 'UPC-A',
       name: 'Fanta Orange',
       description: 'Orange flavoured soft drink with sugar and sweeteners',
       image_url: 'https://www.coca-cola.com/content/dam/onexp/de/de/home-images/brands-images/fanta/fanta-desktop-v2.png'
     },
-    {
-      code: '5060335632302',
-      codeType: 'UPC-A',
-      name: 'Oatly Barista Edition',
-      description: 'Oat drink specifically developed for coffee',
-      image_url: 'https://www.coca-cola.com/content/dam/onexp/de/de/home-images/brands-images/fanta/fanta-desktop-v2.png'
-    },
-    {
-      code: '5060517886554',
-      codeType: 'UPC-A',
-      name: 'Beyond Burger',
-      description: 'Plant-based burger that looks and cooks like beef',
-      image_url: 'https://example.com/images/beyond.jpg'
-    },
-    {
-      code: '8410199074037',
-      codeType: 'EAN-13',
-      name: 'Pringles Original',
-      description: 'Original flavour potato crisps',
-      image_url: 'https://example.com/images/pringles.jpg'
-    },
-    {
-      code: '5010477348678',
-      codeType: 'UPC-A',
-      name: 'Doritos Cool Original',
-      description: 'Cool original flavour corn chips',
-      image_url: 'https://example.com/images/doritos.jpg'
-    },
-    {
-      code: '8001505005738',
-      codeType: 'EAN-13',
-      name: 'Nutella',
-      description: 'Hazelnut spread with cocoa',
-      image_url: 'https://example.com/images/nutella.jpg'
-    },
-    {
-      code: '5000168189585',
-      codeType: 'UPC-A',
-      name: 'Heinz Tomato Ketchup',
-      description: 'Classic tomato ketchup condiment',
-      image_url: 'https://example.com/images/heinz.jpg'
-    },
-    {
-      code: '3046920022651',
-      codeType: 'EAN-13',
-      name: 'Lindt Excellence 85% Cocoa',
-      description: 'Dark chocolate with 85% cocoa content',
-      image_url: 'https://example.com/images/lindt.jpg'
-    }
   ];
   
   // Insert all products
