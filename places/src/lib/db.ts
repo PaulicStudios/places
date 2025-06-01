@@ -252,65 +252,128 @@ export function MockDataReviews() {
       product_code: '5449000000996',
       description: 'Hi im a sugar addict! Love it.',
       stars: 5,
-      transactional_id: 'mock-tx-001',
+      transactional_id: '',
       created_at: new Date().toISOString()
     },
     {
       product_code: '5449000000996',
-      description: 'Im gay.',
+      description: 'Tasts like Pisswasser from GTA5!',
       stars: 1,
-      transactional_id: 'mock-tx-002',
+      transactional_id: '',
       created_at: new Date().toISOString()
     },
     {
       product_code: '5449000000996',
       description: 'Random Bullshit kawungabunga.',
       stars: 3,
-      transactional_id: 'mock-tx-003',
+      transactional_id: '',
       created_at: new Date().toISOString()
     },
     {
       product_code: '5000112654042',
       description: 'Sprite > Cola',
       stars: 4,
-      transactional_id: 'mock-tx-004',
+      transactional_id: '',
       created_at: new Date().toISOString()
     },
     {
       product_code: '5000112654042',
-      description: 'Shut up Meg!!!111!!!!',
+      description: 'Hab schon bessere Getraenke weggekippt!',
       stars: 1,
-      transactional_id: 'mock-tx-005',
+      transactional_id: '',
       created_at: new Date().toISOString()
     },
     {
       product_code: '5000112654042',
-      description: 'Im a nigerian prince donate me eth to 0x000000000 so that I can send you 10k',
+      description: 'Ad and Reality are 1:1 the same, simply amazing!',
       stars: 5,
-      transactional_id: 'mock-tx-006',
+      transactional_id: '',
       created_at: new Date().toISOString()
     },
     {
       product_code: '5000112654035',
       description: 'Ja ist halte ne Fanta ne...',
       stars: 3,
-      transactional_id: 'mock-tx-007',
+      transactional_id: '',
       created_at: new Date().toISOString()
     },
     {
       product_code: '5000112654035',
       description: 'Ich mag auch keine Fanta',
       stars: 3,
-      transactional_id: 'mock-tx-008',
+      transactional_id: '',
       created_at: new Date().toISOString()
     },
     {
       product_code: '5000112654035',
       description: 'Ich bin nich mainstream deswegen fanta!',
       stars: 4,
-      transactional_id: 'mock-tx-009',
+      transactional_id: '',
       created_at: new Date().toISOString()
     },
+    {
+      product_code: '9783608935431',
+      description: 'Habs halb durch geschafft, danach war ich gelangweilt...',
+      stars: 3,
+      transactional_id: '',
+      created_at: new Date().toISOString()
+    },
+    {
+      product_code: '9783608935431',
+      description: 'This book is a book, probably one of the best! -Trump',
+      stars: 5,
+      transactional_id: '',
+      created_at: new Date().toISOString()
+    },
+    {
+      product_code: '9783608935431',
+      description: 'Books good, would recommend!',
+      stars: 5,
+      transactional_id: '',
+      created_at: new Date().toISOString()
+    },
+    {
+      product_code: '9780140449266',
+      description: 'A classic journey through myth and adventure. Timeless!',
+      stars: 5,
+      transactional_id: '',
+      created_at: new Date().toISOString()
+    },
+    {
+      product_code: '9783423131434',
+      description: 'Dark and thought-provoking, but a bit heavy at times.',
+      stars: 3,
+      transactional_id: '',
+      created_at: new Date().toISOString()
+    },
+    {
+      product_code: '9783257228007',
+      description: 'Interesting read, though the pacing felt slow in parts.',
+      stars: 4,
+      transactional_id: '',
+      created_at: new Date().toISOString()
+    },
+    {
+      product_code: '9783608935431',
+      description: 'Rich world-building, but a bit too dense for my taste.',
+      stars: 2,
+      transactional_id: '',
+      created_at: new Date().toISOString()
+    },
+    {
+      product_code: '9780140449266',
+      description: 'Beautiful language and storytelling, though not easy to follow.',
+      stars: 4,
+      transactional_id: '',
+      created_at: new Date().toISOString()
+    },
+    {
+      product_code: '9783423131434',
+      description: 'Unsettling and powerful. Definitely leaves an impression.',
+      stars: 5,
+      transactional_id: '',
+      created_at: new Date().toISOString()
+    }
   ];
 
   for (const review of reviews) {
@@ -339,14 +402,14 @@ export function MockDataProducts() {
       codeType: 'UPC-A',
       name: 'Coca-Cola Classic',
       description: 'Original taste soft drink with sugar and sweeteners',
-      image_url: 'https://www.desertcart.in/products/18597322-coca-cola-original-12-fl-oz-cans-24-pack'
+      image_url: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
     },
     {
       code: '5000112654042',
       codeType: 'UPC-A',
       name: 'Sprite',
       description: 'Lemon and lime flavoured soft drink with sugar and sweetener',
-      image_url: 'https://www.coca-cola.com/content/dam/onexp/de/de/home-images/brands-images/fanta/fanta-desktop-v2.png'
+      image_url: 'https://images.unsplash.com/photo-1690988109041-458628590a9e?q=80&w=2076&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
     },
     {
       code: '5000112654035',
@@ -355,6 +418,34 @@ export function MockDataProducts() {
       description: 'Orange flavoured soft drink with sugar and sweeteners',
       image_url: 'https://www.coca-cola.com/content/dam/onexp/de/de/home-images/brands-images/fanta/fanta-desktop-v2.png'
     },
+    {
+      code:	'9783608935431',
+      codeType:	'ISBN',
+      name:	'J. R. R. Tolkie Der Herr Der Ringe',
+      description:	'No description found.',
+      image_url: "https://images.unsplash.com/photo-1595538934869-503c9448981b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    },
+    {
+      code: '9780140449266',
+      codeType: 'ISBN',
+      name: 'Homer Die Odyssee',
+      description: 'No description found.',
+      image_url: 'https://images.unsplash.com/photo-1505664194779-8beaceb93744?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+    },
+    {
+      code: '9783423131434',
+      codeType: 'ISBN',
+      name: 'Franz Kafka Die Verwandlung',
+      description: 'No description found.',
+      image_url: 'https://images.unsplash.com/photo-1665441233504-e0b42355d0d8?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+    },
+    {
+      code: '9783257228007',
+      codeType: 'ISBN',
+      name: 'Hermann Hesse Der Steppenwolf',
+      description: 'No description found.',
+      image_url: 'https://images.unsplash.com/photo-1477240489935-6c96abea2aba?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+    }
   ];
   
   // Insert all products
