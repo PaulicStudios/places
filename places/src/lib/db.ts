@@ -31,6 +31,7 @@ export function db(): Database.Database {
       );
     `);
     MockDataProducts();
+    MockDataReviews();
   }
 
   //always return the instance of the db
