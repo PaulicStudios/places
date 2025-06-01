@@ -99,20 +99,20 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
       const result = await submitReview(reviewData);
       console.log('Review submission result:', result);
       setTransactionId(result.transactionId);
-      console.log('Receipt:', receipt);
+      // console.log('Receipt:', receipt);
 
-      const reviewResult = await SaveReviewSubmitDB({
-        product_code: productId,
-        name: "Anonymous",
-        description: content,
-        stars: rating,
-        transactionId: result.transactionId,
-      });
-      console.log('Review submission result:', reviewResult);
+      // const reviewResult = await SaveReviewSubmitDB({
+      //   product_code: productId,
+      //   name: "Anonymous",
+      //   description: content,
+      //   stars: rating,
+      //   transactionId: result.transactionId,
+      // });
+      // console.log('Review submission result:', reviewResult);
 
-      if (!reviewResult.success) {
-        throw new Error(reviewResult.error || 'Failed to save review');
-      }
+      // if (!reviewResult.success) {
+      //   throw new Error(reviewResult.error || 'Failed to save review');
+      // }
 
     } catch (error) {
       console.error('Failed to submit review:', error);
@@ -147,9 +147,9 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
           <Typography className="text-center text-gray-600">
             Thank you for your review. Your contribution helps others make informed decisions.
           </Typography>
-          {transactionId && (
+          {receipt && (
             <a
-              href={`https://worldchain-mainnet.explorer.alchemy.com/tx/${transactionId}`}
+              href={`https://worldchain-mainnet.explorer.alchemy.com/tx/${receipt.transactionHash}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 hover:text-blue-800 underline"
