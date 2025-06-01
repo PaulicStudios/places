@@ -6,7 +6,7 @@ import { worldchain } from 'viem/chains';
 import { keccak256, encodePacked } from 'viem';
 import ProductReviewCommitmentsABI from '@/abi/ProductReviewCommitments.json';
 
-interface ReviewSubmission {
+export interface ReviewSubmissionDB {
   product_code: string;
   name: string;
   description: string;
@@ -15,7 +15,7 @@ interface ReviewSubmission {
 }
 
 export default async function ReviewSubmit(
-  submission: ReviewSubmission
+  submission: ReviewSubmissionDB
 ) {
   if (!submission.description || submission.description.trim().length === 0) {
     submission.description = "No description was provided!";
@@ -105,7 +105,7 @@ export default async function ReviewSubmit(
     }
 
     // If all verifications pass, save the review
-    const reviewData: ReviewSubmission = {
+    const reviewData: ReviewSubmissionDB = {
       product_code: submission.product_code,
       name: submission.name,
       description: submission.description,

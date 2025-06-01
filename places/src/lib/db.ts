@@ -1,3 +1,4 @@
+import { ReviewSubmissionDB } from '@/components/Reviews';
 import Database from 'better-sqlite3';
 
 const dbPath = process.env.PATH_TO_DB;
@@ -104,12 +105,7 @@ export function AverageStars(id: string) {
   return median;
 }
 
-export function saveReview(review: {
-  product_code: string;
-  name: string;
-  description: string;
-  stars: number;
-}) {
+export function saveReview(review: ReviewSubmissionDB) {
   const database = db();
   
   const stmt = database.prepare(`
@@ -119,7 +115,7 @@ export function saveReview(review: {
   
   return stmt.run(
     review.product_code,
-    review.name,
+    "",
     review.description,
     review.stars
   );

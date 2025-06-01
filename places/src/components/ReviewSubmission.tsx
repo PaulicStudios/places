@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useWaitForTransactionReceipt } from '@worldcoin/minikit-react';
 import { createPublicClient, http } from 'viem';
 import { worldchain } from 'viem/chains';
-import { MiniKit, VerificationLevel, ISuccessResult } from '@worldcoin/minikit-js';
+import { MiniKit, VerificationLevel } from '@worldcoin/minikit-js';
 import { submitReview } from '@/utils/review';
 import type { ReviewSubmission } from '@/utils/review';
 import { keccak256, encodePacked } from 'viem';
