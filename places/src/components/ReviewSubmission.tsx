@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useWaitForTransactionReceipt } from '@worldcoin/minikit-react';
 import { createPublicClient, http } from 'viem';
 import { worldchain } from 'viem/chains';
@@ -10,6 +10,7 @@ import type { ReviewSubmission } from '@/utils/review';
 import { keccak256, encodePacked } from 'viem';
 import { StarRating } from './StarRating';
 import { Typography, Button, TextArea } from '@worldcoin/mini-apps-ui-kit-react';
+import { checkTransactionStatus } from '@/app/actions/checkTransaction';
 
 interface ReviewSubmissionProps {
   productId: string;
@@ -18,6 +19,8 @@ interface ReviewSubmissionProps {
 export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [transactionId, setTransactionId] = useState<string>('');
+  const [transactionHash, setTransactionHash] = useState<string | null>(null);
+  const [isPolling, setIsPolling] = useState(false);
   const [content, setContent] = useState('');
   const [rating, setRating] = useState(5);
   const [error, setError] = useState<string | null>(null);
@@ -34,6 +37,48 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
     },
     transactionId: transactionId,
   });
+
+  // Add polling effect
+  useEffect(() => {
+    let pollInterval: NodeJS.Timeout;
+
+    const pollTransaction = async () => {
+      if (!transactionId || isPolling) return;
+
+      setIsPolling(true);
+      let attempts = 0;
+      const maxAttempts = 30; // 5 minutes with 10-second intervals
+
+      pollInterval = setInterval(async () => {
+        attempts++;
+        console.log(`Polling attempt ${attempts} for transaction ${transactionId}`);
+
+        const result = await checkTransactionStatus(transactionId);
+        
+        if (result.success && result.hash) {
+          console.log('Transaction hash received:', result.hash);
+          setTransactionHash(result.hash);
+          setIsPolling(false);
+          clearInterval(pollInterval);
+        } else if (attempts >= maxAttempts) {
+          console.log('Max polling attempts reached');
+          setIsPolling(false);
+          clearInterval(pollInterval);
+          setError('Transaction status check timed out');
+        }
+      }, 10000); // Poll every 10 seconds
+    };
+
+    if (transactionId) {
+      pollTransaction();
+    }
+
+    return () => {
+      if (pollInterval) {
+        clearInterval(pollInterval);
+      }
+    };
+  }, [transactionId]);
 
   const handleReviewSubmission = async () => {
     if (!content.trim()) {
@@ -123,7 +168,7 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
     <div className="p-4 space-y-4">
       {receipt && (
         <p>{receipt.transactionHash}</p>
-)}
+      )}
       {isConfirmed ? (
         <div className="flex flex-col items-center justify-center space-y-4 py-8">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
@@ -147,9 +192,9 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
           <Typography className="text-center text-gray-600">
             Thank you for your review. Your contribution helps others make informed decisions.
           </Typography>
-          {receipt && (
+          {transactionHash && (
             <a
-              href={`https://worldchain-mainnet.explorer.alchemy.com/tx/${receipt.transactionHash}`}
+              href={`https://explorer.worldcoin.org/tx/${transactionHash}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 hover:text-blue-800 underline"
@@ -184,36 +229,13 @@ export function ReviewSubmission({ productId }: ReviewSubmissionProps) {
             <Button
               onClick={handleReviewSubmission}
               variant="primary"
-              disabled={isSubmitting || isConfirming || !content.trim()}
+              disabled={isSubmitting || isConfirming || isPolling || !content.trim()}
               className="min-w-[200px]"
             >
-              {isSubmitting || isConfirming ? (
-                <div className="flex items-center justify-center">
-                  <svg 
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    fill="none" 
-                    viewBox="0 0 24 24"
-                  >
-                    <circle 
-                      className="opacity-25" 
-                      cx="12" 
-                      cy="12" 
-                      r="10" 
-                      stroke="currentColor" 
-                      strokeWidth="4"
-                    />
-                    <path 
-                      className="opacity-75" 
-                      fill="currentColor" 
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                  {isSubmitting ? 'Submitting...' : 'Confirming...'}
-                </div>
-              ) : (
-                'Submit Review'
-              )}
+              {isSubmitting ? 'Submitting...' : 
+               isConfirming ? 'Confirming...' : 
+               isPolling ? 'Waiting for confirmation...' : 
+               'Submit Review'}
             </Button>
           </div>
           

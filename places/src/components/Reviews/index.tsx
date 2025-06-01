@@ -28,6 +28,8 @@ export default async function SaveReviewDB(
       submission.stars = 5;
   }
 
+  
+
   try {
     // Create Viem client
     const client = createPublicClient({
