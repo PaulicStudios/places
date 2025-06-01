@@ -10,7 +10,6 @@ import type { ReviewSubmission } from '@/utils/review';
 import { keccak256, encodePacked } from 'viem';
 import { StarRating } from './StarRating';
 import { Typography, Button, TextArea } from '@worldcoin/mini-apps-ui-kit-react';
-import SaveReviewSubmitDB from './Reviews';
 
 interface ReviewSubmissionProps {
   productId: string;
