@@ -2,6 +2,8 @@
 
 If you have the World App you can try our Mini App here: 🌟 [REVIEWS](https://worldcoin.org/mini-app?app_id=app_23fd4240c950374e1cd8460e2593bd08&draft_id=meta_b6fbc66731112d4e9d9bbeaaa68ab71e&app_mode=mini-app) 🌟
 
+See the ETH-Global Showcase here: [Showcase](https://ethglobal.com/showcase/reviews-dryvi)
+
 **World ID powered review app for authentic human written reviews and ratings**
 
 Review is a review and discovery platform built as a Worldcoin Mini App that leverages World ID authentication to create a trusted review ecosystem. Users can search for products by name or scan barcodes (supporting ISBN, UPC, and EAN formats) to instantly access product information and read or write verified reviews.
