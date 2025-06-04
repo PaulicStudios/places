@@ -67,6 +67,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    if (result.status === 404) {
+      return NextResponse.json(
+        { error: 'Failed because no resources available.'},
+        { status: result.status }
+      )
+    }
+
     // Process and save API response
     const fullProductData = await result.json();
     const filteredData: ProductInformation = {
